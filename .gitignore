@@ -1,0 +1,45 @@
+/vendor
+/node_modules
+/public/storage
+/public/hot
+/storage/*.key
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+/storage/logs/*
+.env
+.env.backup
+.phpunit.result.cache
+Homestead.json
+Homestead.yaml
+auth.json
+.DS_Store
+
+# --- Member media. Never in version control. ---
+# These disks hold people's faces and identity documents. `photos` and
+# `connect_photos` are private by design and `kyc` is purged after 30 days;
+# committing any of them would make a permanent, public copy of exactly the
+# data the whole product is built to keep private.
+/storage/app/photos
+/storage/app/connect_photos
+/storage/app/kyc
+/storage/app/public
+
+# --- The database. ---
+# Seeded demo data, password hashes and encrypted mobile numbers. Rebuild it
+# with `php artisan migrate:fresh --seed` instead.
+/database/*.sqlite
+/database/*.sqlite-journal
+
+# --- Runtime hero uploads. ---
+# What an admin uploads at /admin/hero lands here. The shipped set lives in
+# `database/seeders/hero-photos/` and is written back out by the seeder, so
+# this directory is generated output, not source.
+/public/img/hero/*
+!/public/img/hero/.gitignore
+
+# --- Editors ---
+/.idea
+/.vscode
+/.fleet
+*.swp

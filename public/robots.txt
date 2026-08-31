@@ -1,0 +1,27 @@
+User-agent: *
+
+# Public, indexable
+Allow: /
+Allow: /matrimony/
+Allow: /brides
+Allow: /grooms
+Allow: /classifieds
+Allow: /guides/
+Allow: /marriage-biodata-maker
+
+# Member surfaces — never indexed
+Disallow: /me
+Disallow: /search
+Disallow: /interests
+Disallow: /mailbox
+Disallow: /access-requests
+Disallow: /family
+Disallow: /family-dash
+Disallow: /operator/
+Disallow: /admin/
+
+# The wall. Connect is never public, never indexed, under any circumstance.
+Disallow: /connect
+Disallow: /connect/
+
+Sitemap: https://example.com/sitemap.xml
