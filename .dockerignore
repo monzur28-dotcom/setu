@@ -1,0 +1,23 @@
+# Build context hygiene: keep secrets and local state out of the image.
+.env
+.env.backup*
+.git
+.gitignore
+/vendor
+/node_modules
+/database/*.sqlite
+/database/*.sqlite-journal
+/storage/app/photos
+/storage/app/connect_photos
+/storage/app/kyc
+/storage/app/public
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+/storage/logs/*
+/public/img/hero/*
+/public/storage
+.phpunit.result.cache
+/tests
+/.idea
+/.vscode

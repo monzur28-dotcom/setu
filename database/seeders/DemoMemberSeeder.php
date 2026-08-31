@@ -101,7 +101,7 @@ class DemoMemberSeeder extends Seeder
                     'registrant_name'         => $byFamily ? 'Family member' : null,
                     'candidate_name'          => $name,
                     'email'                   => 'demo'.($created + 1).'@setu.test',
-                    'password'                => Hash::make('password'),
+                    'password'                => Hash::make(SeedPassword::get()),
                     'role'                    => 'MEMBER',
                     'status'                  => $unconfirmed ? 'UNVERIFIED' : 'ACTIVE',
                     'verification_level'      => $i % 4 === 0 ? 'NID_SELFIE' : ($i % 2 === 0 ? 'NID' : 'PHONE'),
@@ -254,7 +254,7 @@ class DemoMemberSeeder extends Seeder
         $this->guardians($males, $females);
         $this->queuePendingProfiles();
 
-        $this->command?->info("  Demo: {$created} members (password: \"password\"), 2 left unconfirmed.");
+        $this->command?->info("  Demo: {$created} members, 2 left unconfirmed.");
     }
 
     /**

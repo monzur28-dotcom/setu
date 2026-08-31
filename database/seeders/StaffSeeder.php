@@ -33,7 +33,7 @@ class StaffSeeder extends Seeder
                 'registrant_relationship' => 'SELF',
                 'candidate_name'          => $name,
                 'email'                   => $email,
-                'password'                => Hash::make('password'),
+                'password'                => Hash::make(SeedPassword::get()),
                 'role'                    => $role,
                 'status'                  => 'ACTIVE',
                 'verification_level'      => 'NID_SELFIE',
@@ -46,6 +46,6 @@ class StaffSeeder extends Seeder
             $u->save();
         }
 
-        $this->command?->info('  Staff: '.count($staff).' accounts (password: "password").');
+        $this->command?->info('  Staff: '.count($staff).' accounts.');
     }
 }

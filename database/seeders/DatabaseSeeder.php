@@ -28,10 +28,21 @@ class DatabaseSeeder extends Seeder
             ContentSeeder::class,
         ]);
 
+        $password = SeedPassword::get();
+
         $this->command?->newLine();
         $this->command?->info('Seeding complete.');
-        $this->command?->line('  Admin:  admin@setu.test  / password');
-        $this->command?->line('  Ghotok: ghotok@setu.test / password');
-        $this->command?->line('  Member: demo1@setu.test  / password');
+        $this->command?->line('  Admin:  admin@setu.test');
+        $this->command?->line('  Ghotok: ghotok@setu.test');
+        $this->command?->line('  Member: demo1@setu.test');
+        $this->command?->line('  Password: '.$password);
+
+        if (SeedPassword::isGenerated()) {
+            // Printed once and nowhere else. There is no way to read it back
+            // out of the database, which is the point of hashing it.
+            $this->command?->newLine();
+            $this->command?->warn('  ^ Generated for this environment and shown only here.');
+            $this->command?->warn('    Copy it now, or set SETU_SEED_PASSWORD and reseed.');
+        }
     }
 }
