@@ -42,6 +42,10 @@ class SiteSetting extends Model
         'door_tag_size'  => [11, 9, 18],
         'door_head_size' => [25, 16, 44],
         'door_body_size' => [14, 11, 20],
+
+        // The globe panel's width in px. Its height follows from the clip's
+        // aspect ratio, so one number is the whole control.
+        'globe_width'    => [420, 220, 680],
     ];
 
     public static function all_(): array

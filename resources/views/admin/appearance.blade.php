@@ -87,6 +87,16 @@
             </div>
         </div>
 
+        {{-- --------------------------------------------------- the globe --}}
+        <div class="card pad stack g12">
+            <span class="lbl">@lang('admin.globe')</span>
+            <p class="xs muted" style="margin:0">@lang('admin.globe_hint')</p>
+            <div class="field">
+                <label>@lang('admin.globe_width') — <span class="mono" id="globeW-out">{{ $globeW }}</span>px</label>
+                <input type="range" name="globe_width" id="globeW" min="220" max="680" step="10" value="{{ $globeW }}">
+            </div>
+        </div>
+
         {{-- --------------------------------------------- doorway text --}}
         <div class="card pad stack g12">
             <span class="lbl">@lang('admin.doorway_text')</span>
@@ -167,6 +177,12 @@
     <div class="theme-preview-wrap">
         <div class="theme-preview" id="preview">
             <span class="lbl">@lang('admin.preview')</span>
+
+            <div class="globe-panel" id="globe-preview" style="max-width:{{ $globeW }}px">
+                <img src="{{ asset('video/globe-poster.jpg') }}" alt=""
+                     style="width:100%;height:100%;object-fit:cover;display:block">
+                <div class="globe-panel-vignette"></div>
+            </div>
             <h2>@lang('home.h1')</h2>
             <p class="sub">@lang('home.doorway_sub')</p>
 
@@ -243,6 +259,12 @@
     bind('blur',  function (v) { set('--door-blur', v + 'px'); document.getElementById('blur-out').textContent = v; });
     bind('brand', function (v) { mixBrand(v); document.getElementById('brand-out').textContent = v; });
     bind('gold',  function (v) { set('--gold', v); document.getElementById('gold-out').textContent = v; });
+
+    bind('globeW', function (v) {
+        document.getElementById('globeW-out').textContent = v;
+        var g = document.getElementById('globe-preview');
+        if (g) { g.style.maxWidth = v + 'px'; }
+    });
 
     // The doorway parts are styled by rule rather than by custom property,
     // so the preview writes a scoped stylesheet instead of setting variables

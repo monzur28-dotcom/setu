@@ -87,6 +87,7 @@ class Theme
             '--brand-deep' => "color-mix(in srgb, {$brand} 76%, black)",
             '--brand-tint' => "color-mix(in srgb, {$brand} 13%, white)",
             '--gold'       => $gold,
+            '--globe-width' => SiteSetting::number('globe_width').'px',
         ];
 
         /*

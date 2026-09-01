@@ -136,6 +136,7 @@ class AdminController extends Controller
             'tagColor' => Theme::doorColour('door_tag_color', '#7c6a6e'),
             'ctaColor' => Theme::doorColour('door_cta_color', '#63121f'),
             'ctaDating' => Theme::doorColour('door_cta_dating_color', '#1b5249'),
+            'globeW'    => SiteSetting::number('globe_width'),
             'blur'    => SiteSetting::number('door_blur'),
             'slide'   => HeroSlide::where('is_active', true)->orderBy('sort_order')->first(),
         ]);
@@ -160,6 +161,7 @@ class AdminController extends Controller
             'door_tag_size'         => ['required', 'integer', 'min:9',  'max:18'],
             'door_head_size'        => ['required', 'integer', 'min:16', 'max:44'],
             'door_body_size'        => ['required', 'integer', 'min:11', 'max:20'],
+            'globe_width'           => ['required', 'integer', 'min:220', 'max:680'],
             'door_tag_color'        => ['required', 'regex:/^#[0-9a-fA-F]{6}$/'],
             'door_cta_color'        => ['required', 'regex:/^#[0-9a-fA-F]{6}$/'],
             'door_cta_dating_color' => ['required', 'regex:/^#[0-9a-fA-F]{6}$/'],
