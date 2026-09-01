@@ -291,7 +291,12 @@
 </section>
 
 <div class="sec cta-banner">
-    <div>
+    {{-- Warm hexagonal lights over the brand gradient. This is the plate the
+         effect was made for: additive light needs something dark to be
+         additive against. --}}
+    @include('partials.bokeh', ['count' => 16, 'max' => 150])
+
+    <div class="cta-inner">
         <span class="lbl">@lang('home.cta_kicker')</span>
         <h2>@lang('home.cta_h')</h2>
     </div>
