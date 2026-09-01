@@ -13,6 +13,7 @@ use App\Models\OperatorAccessLog;
 use App\Models\Photo;
 use App\Models\Profile;
 use App\Models\Report;
+use App\Models\SiteSetting;
 use App\Models\SuccessFee;
 use App\Models\User;
 use App\Services\LandingPageService;
@@ -111,6 +112,27 @@ class AdminController extends Controller
     }
 
     /**
+     * How solid the two doorway cards are. Clamped in the model rather than
+     * only here, so the range holds however the value is written.
+     */
+    public function appearance(Request $request)
+    {
+        $data = $request->validate([
+            'door_tint' => ['required', 'integer', 'min:0', 'max:100'],
+            'door_blur' => ['required', 'integer', 'min:0', 'max:30'],
+        ]);
+
+        foreach ($data as $key => $value) {
+            SiteSetting::put($key, $value, $request->user());
+        }
+
+        AuditLog::write($request->user(), 'appearance_updated', [
+            'entity_type' => 'SITE_SETTING', 'after' => $data,
+        ]);
+
+        return back()->with('status', __('admin.appearance_saved'));
+    }
+    /**
      * The pre-publication word list. Editing it never changes a decision
      * already made — it changes which profiles the queue puts first from
      * the next submission onward.
@@ -166,6 +188,8 @@ class AdminController extends Controller
         return view('admin.hero', [
             'slides'   => HeroSlide::orderBy('product')->orderBy('sort_order')->orderBy('id')->get(),
             'interval' => config('setu.hero.interval_ms'),
+            'tint'     => SiteSetting::number('door_tint'),
+            'blur'     => SiteSetting::number('door_blur'),
         ]);
     }
 

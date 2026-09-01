@@ -10,6 +10,15 @@
     rather than guessing. The wall between them starts here: choosing a door
     is a navigation, never a signal recorded against anyone.
 --}}
+{{-- Administrator-set, so they arrive as custom properties rather than
+     being baked into the stylesheet. --}}
+<style>
+    .doorway{
+        --door-tint: {{ \App\Models\SiteSetting::number('door_tint') }};
+        --door-blur: {{ \App\Models\SiteSetting::number('door_blur') }}px;
+    }
+</style>
+
 <section class="doorway">
     <div class="doorway-art" aria-hidden="true">
         @foreach ($slides as $i => $slide)

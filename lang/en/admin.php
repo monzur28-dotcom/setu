@@ -7,11 +7,18 @@
 
 return [
     'ad_queue' => 'Advertisement queue',
+    'appearance' => 'Doorway glass',
+    'appearance_saved' => 'Doorway updated.',
+    'appearance_sub' => 'How solid the two cards on the front page are. Drag and watch the preview.',
     'approve' => 'Approve',
     'confirm' => 'Confirm',
     'consent_violations' => 'Consent violations',
     'awaiting_first' => ':n awaiting a first read',
     'critical' => 'Critical',
+    'door_blur' => 'Frost',
+    'door_blur_hint' => 'How much the photograph behind the card is blurred.',
+    'door_tint' => 'Clearness',
+    'door_tint_hint' => '100 is a solid card. Lower lets the photograph through.',
     'fee_confirmed' => 'Fee confirmed.',
     'hero' => 'Front page slideshow',
     'hero_active' => 'Showing',
