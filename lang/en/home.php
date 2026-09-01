@@ -37,6 +37,7 @@ return [
     'doorway_sub' => 'Two things people come here for, and they are not the same thing. Pick the one you came for.',
     'free_promise' => 'Looking is always free. You only pay when you want to make the first move.',
     'free_tools' => 'Free tools — no account needed',
+    'globe_caption' => 'Members on six continents',
     'h1' => 'Find your life partner',
     'hero_badge' => 'Trusted by families in 140+ countries',
     'how_it_works' => 'How it works',

@@ -53,6 +53,11 @@
 
     <div class="home-hero {{ $featured->isEmpty() ? 'no-art' : '' }}">
         <div class="hero-copy">
+            {{-- Fills the column, and illustrates the claim the stats below
+                 make rather than sitting there as decoration. --}}
+            @include('partials.globe')
+            <div class="globe-caption">@lang('home.globe_caption')</div>
+
             <div class="hero-actions">
                 <a class="btn" href="{{ route('register') }}">@lang('nav.register_free')</a>
                 <a class="btn ghost" href="{{ route('public.search') }}">@lang('home.browse')</a>

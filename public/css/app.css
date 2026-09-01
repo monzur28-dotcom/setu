@@ -533,3 +533,100 @@ select.inp{appearance:none; background-image:linear-gradient(45deg,transparent 5
   .filter-bar{grid-template-columns:1fr}
   .filter-bar .has-photo,.filter-bar .row.g6{grid-column:auto}
 }
+
+/* ============ THE GLOBE ============
+   Twelve meridians and five latitudes on a real 3D sphere, turning. The
+   meridians foreshorten correctly as they come round, which is the whole
+   difference between this and a spinning flat circle.
+
+   --r is the radius. Change it and everything else follows. */
+.globe-scene{
+  --r:104px;
+  position:relative; width:calc(var(--r) * 2); height:calc(var(--r) * 2);
+  perspective:calc(var(--r) * 7); margin:0 auto 4px;
+}
+.globe{
+  position:absolute; inset:0; transform-style:preserve-3d;
+  /* Tilted like an axis, then turning. 24s is slow enough to read as
+     motion rather than as a spinner asking you to wait. */
+  animation:globe-turn 24s linear infinite;
+}
+@keyframes globe-turn{
+  from{transform:rotateX(-16deg) rotateY(0deg)}
+  to{transform:rotateX(-16deg) rotateY(360deg)}
+}
+
+.globe-meridian,
+.globe-latitude{
+  position:absolute; inset:0; border-radius:50%;
+  border:1px solid color-mix(in srgb,var(--brand) 34%,transparent);
+}
+.globe-meridian{transform:rotateY(var(--turn))}
+/* Laid flat at its true height, shrunk to the radius of that latitude. */
+.globe-latitude{
+  transform:translateY(calc(var(--lift) * var(--r))) rotateX(90deg) scale(var(--shrink));
+  border-color:color-mix(in srgb,var(--brand) 22%,transparent);
+}
+
+/* A member somewhere. Positioned on the sphere's surface, so it travels
+   round the back and returns with the rotation. */
+/* The pin's POSITION rides the sphere, but its face must not: a flat disc
+   carried round a rotating parent is seen edge-on for half the turn and
+   renders as a smear. The inner <i> counter-rotates at exactly the parent's
+   rate, cancelling the spin so the dot always faces the viewer while still
+   travelling round the back. */
+.globe-pin{
+  position:absolute; top:50%; left:50%; width:0; height:0;
+  transform-style:preserve-3d;
+  transform:translate3d(calc(var(--x) * var(--r)), calc(var(--y) * var(--r)), calc(var(--z) * var(--r)));
+}
+.globe-pin i{
+  display:block; position:relative; width:9px; height:9px; margin:-4.5px 0 0 -4.5px;
+  border-radius:50%; background:var(--brand);
+  animation:globe-face 24s linear infinite;
+}
+/* The ping is a scaling ring, not an animated box-shadow. box-shadow
+   repaints every frame; transform and opacity are composited. On a page
+   element that never stops, that is the difference between a warm laptop
+   and a cold one. */
+.globe-pin i::after{
+  content:""; position:absolute; inset:0; border-radius:50%;
+  border:1.5px solid var(--brand); opacity:0;
+  animation:globe-ping 3.4s ease-out infinite;
+  animation-delay:var(--delay);
+  will-change:transform, opacity;
+}
+@keyframes globe-face{
+  from{transform:rotateY(0deg) rotateX(16deg)}
+  to{transform:rotateY(-360deg) rotateX(16deg)}
+}
+@keyframes globe-ping{
+  0%   {transform:scale(1);   opacity:.55}
+  70%  {transform:scale(3.2); opacity:0}
+  100% {transform:scale(3.2); opacity:0}
+}
+
+/* Lighting. A wireframe with no shading reads as a flat spirograph. */
+.globe-glow{
+  position:absolute; inset:0; border-radius:50%; pointer-events:none;
+  background:
+    radial-gradient(circle at 30% 26%, color-mix(in srgb,var(--surface) 38%,transparent), transparent 48%),
+    radial-gradient(circle at 72% 80%, color-mix(in srgb,var(--brand) 22%,transparent), transparent 58%);
+}
+
+.globe-caption{
+  text-align:center; font-size:11px; color:var(--muted);
+  font-family:"IBM Plex Mono",monospace; letter-spacing:.1em; text-transform:uppercase;
+}
+
+@media (max-width:900px){ .globe-scene{--r:84px} }
+@media (max-width:560px){ .globe-scene{--r:72px} }
+
+/* A continuously moving object is a genuine problem for some people —
+   vestibular disorders, and anyone who simply finds it distracting. Hold
+   it still and keep the picture. */
+@media (prefers-reduced-motion: reduce){
+  .globe{animation:none; transform:rotateX(-16deg) rotateY(24deg)}
+  .globe-pin i{animation:none; transform:rotateY(-24deg) rotateX(16deg)}
+  .globe-pin i::after{animation:none; opacity:.35}
+}
