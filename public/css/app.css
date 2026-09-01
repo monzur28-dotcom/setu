@@ -520,7 +520,7 @@ select.inp{appearance:none; background-image:linear-gradient(45deg,transparent 5
   font-family:var(--font-mono); font-size:10px; letter-spacing:.14em;
   text-transform:uppercase; color:var(--muted);
 }
-.door-h{font-family:var(--font-head); font-size:1.55rem; line-height:1.15; color:var(--ink)}
+.door-h{font-family:var(--font-head); font-size:25px; line-height:1.15; color:var(--ink)}
 .door p{font-size:13.5px; color:var(--body); margin:0}
 .door-cta{margin-top:6px; font-size:13px; font-weight:600}
 /* Each door wears its own product's colour, which is the fastest way to say
@@ -759,3 +759,10 @@ input[type="color"]{
 .pw-toggle:hover{color:var(--ink); background:var(--surface-2)}
 /* Keyboard users have to be able to see where they are. */
 .pw-toggle:focus-visible{outline:2px solid var(--brand); outline-offset:1px; color:var(--ink)}
+
+/* Alignment picker on the appearance screen. */
+.align-option{
+  display:inline-flex; align-items:center; gap:6px; padding:7px 12px; cursor:pointer;
+  border:1px solid var(--line); border-radius:9px; background:var(--surface); font-size:13px;
+}
+.align-option.on{border-color:var(--brand); background:var(--brand-tint); color:var(--brand-deep)}

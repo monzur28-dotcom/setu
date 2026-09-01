@@ -129,6 +129,13 @@ class AdminController extends Controller
             'headW'   => SiteSetting::number('heading_weight'),
             'bodyW'   => SiteSetting::number('body_weight'),
             'tint'    => SiteSetting::number('door_tint'),
+            'align'   => SiteSetting::get('door_align', 'left'),
+            'tagSize' => SiteSetting::number('door_tag_size'),
+            'headSize' => SiteSetting::number('door_head_size'),
+            'bodySize' => SiteSetting::number('door_body_size'),
+            'tagColor' => Theme::doorColour('door_tag_color', '#7c6a6e'),
+            'ctaColor' => Theme::doorColour('door_cta_color', '#63121f'),
+            'ctaDating' => Theme::doorColour('door_cta_dating_color', '#1b5249'),
             'blur'    => SiteSetting::number('door_blur'),
             'slide'   => HeroSlide::where('is_active', true)->orderBy('sort_order')->first(),
         ]);
@@ -147,6 +154,15 @@ class AdminController extends Controller
             // Hex only. This value ends up inside a stylesheet.
             'brand_color'    => ['required', 'regex:/^#[0-9a-fA-F]{6}$/'],
             'gold_color'     => ['required', 'regex:/^#[0-9a-fA-F]{6}$/'],
+
+            // The doorway cards' own text.
+            'door_align'            => ['required', Rule::in(['left', 'center', 'right'])],
+            'door_tag_size'         => ['required', 'integer', 'min:9',  'max:18'],
+            'door_head_size'        => ['required', 'integer', 'min:16', 'max:44'],
+            'door_body_size'        => ['required', 'integer', 'min:11', 'max:20'],
+            'door_tag_color'        => ['required', 'regex:/^#[0-9a-fA-F]{6}$/'],
+            'door_cta_color'        => ['required', 'regex:/^#[0-9a-fA-F]{6}$/'],
+            'door_cta_dating_color' => ['required', 'regex:/^#[0-9a-fA-F]{6}$/'],
         ]);
 
         foreach ($data as $key => $value) {

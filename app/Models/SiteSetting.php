@@ -37,6 +37,11 @@ class SiteSetting extends Model
         'base_font_px'   => [15, 13, 19],
         'heading_weight' => [500, 400, 700],
         'body_weight'    => [400, 300, 600],
+
+        // The doorway cards' own text, in px.
+        'door_tag_size'  => [11, 9, 18],
+        'door_head_size' => [25, 16, 44],
+        'door_body_size' => [14, 11, 20],
     ];
 
     public static function all_(): array

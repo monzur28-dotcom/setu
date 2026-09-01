@@ -107,6 +107,7 @@ class Theme
         ];
 
         $out  = ':root{'.self::declarations($root).'}';
+        $out .= self::doorwayCss();
         $out .= '@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){'.self::declarations($dark).'}}';
         $out .= ':root[data-theme="dark"]{'.self::declarations($dark).'}';
 
@@ -122,6 +123,85 @@ class Theme
         return $out;
     }
 
+    /**
+     * The doorway cards' own text. Separate from the palette because these
+     * sit on a photograph, and what reads well on paper can vanish on an
+     * image — which is exactly why they are worth setting by hand.
+     */
+    public static function doorwayCss(): string
+    {
+        $align = self::align();
+
+        $tag    = self::hex(SiteSetting::get('door_tag_color'), '#7c6a6e');
+        $cta    = self::hex(SiteSetting::get('door_cta_color'), '#63121f');
+        $ctaAlt = self::hex(SiteSetting::get('door_cta_dating_color'), '#1b5249');
+
+        $out  = '.door{text-align:'.$align.'}';
+        $out .= '.door-tag{font-size:'.SiteSetting::number('door_tag_size').'px;color:'.$tag.'}';
+        $out .= '.door-h{font-size:'.SiteSetting::number('door_head_size').'px}';
+        $out .= '.door p{font-size:'.SiteSetting::number('door_body_size').'px}';
+        $out .= '.door-matrimony .door-cta{color:'.$cta.'}';
+        $out .= '.door-dating .door-cta{color:'.$ctaAlt.'}';
+
+        // Dark mode lifts each toward white for the same reason the brand is
+        // lifted: a colour chosen against a pale card is unreadable on a dark
+        // one, and the administrator picking it would never see that.
+        $dark = [
+            '.door-tag'                  => 'color:'.self::lift($tag),
+            '.door-matrimony .door-cta'  => 'color:'.self::lift($cta),
+            '.door-dating .door-cta'     => 'color:'.self::lift($ctaAlt),
+        ];
+
+        $out .= '@media (prefers-color-scheme: dark){'
+            .self::scoped(':root:not([data-theme="light"])', $dark).'}';
+        $out .= self::scoped(':root[data-theme="dark"]', $dark);
+
+        return $out;
+    }
+
+    /**
+     * Prefixes each selector with a scope. Built by joining a map rather than
+     * by string-replacing braces: an earlier draft did the latter and then
+     * trimmed the result with rtrim, whose second argument is a character
+     * list, not a suffix — it would have eaten whatever those characters
+     * happened to be at the end.
+     *
+     * @param array<string,string> $rules selector => declarations
+     */
+    private static function scoped(string $scope, array $rules): string
+    {
+        $out = '';
+
+        foreach ($rules as $selector => $declarations) {
+            $out .= $scope.' '.$selector.'{'.$declarations.'}';
+        }
+
+        return $out;
+    }
+
+    /** The stored colour for one doorway part, or its default. */
+    public static function doorColour(string $key, string $fallback): string
+    {
+        return self::hex(SiteSetting::get($key), $fallback);
+    }
+
+    public static function alignment(): string
+    {
+        return self::align();
+    }
+
+    private static function align(): string
+    {
+        $align = (string) SiteSetting::get('door_align', 'left');
+
+        return in_array($align, ['left', 'center', 'right'], true) ? $align : 'left';
+    }
+
+    /** Toward white, for dark surfaces. */
+    private static function lift(string $hex): string
+    {
+        return "color-mix(in srgb, {$hex} 55%, white)";
+    }
     /** @param array<string,string|int> $vars */
     private static function declarations(array $vars): string
     {
