@@ -27,6 +27,7 @@ return [
     'matrimonial' => 'Matrimony',
     'matrimony' => 'Matrimony',
     'member' => 'Member',
+    'member_area_needs_profile' => 'That is the member area, and this account has no member profile.',
     'messages' => 'Messages',
     'my_profile' => 'My profile',
     'open_connect' => 'Open Connect',

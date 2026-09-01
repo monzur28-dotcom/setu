@@ -29,6 +29,7 @@ return [
     'email' => 'Email (optional)',
     'enter_code' => 'Enter code',
     'failed' => 'Those details do not match our records.',
+    'finish_your_profile' => 'Finish your profile to use this.',
     'have_account' => 'Already have a profile?',
     'hide_password' => 'Hide password',
     'identifier' => 'Mobile or email',

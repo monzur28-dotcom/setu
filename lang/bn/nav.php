@@ -27,6 +27,7 @@ return [
     'matrimonial' => 'বিয়ে',
     'matrimony' => 'বিয়ে',
     'member' => 'সদস্য',
+    'member_area_needs_profile' => 'ওটি সদস্য এলাকা, আর এই অ্যাকাউন্টের কোনো সদস্য প্রোফাইল নেই।',
     'messages' => 'বার্তা',
     'my_profile' => 'আমার প্রোফাইল',
     'open_connect' => 'পরিচয় খুলুন',

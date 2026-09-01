@@ -92,9 +92,19 @@ Route::post('/logout', [LoginController::class, 'logout'])->middleware('auth')->
 |--------------------------------------------------------------------------
 */
 Route::middleware('auth')->group(function () {
+    // Outside the `member` guard on purpose: these two are what CREATES a
+    // profile, so requiring one to reach them would lock every new member
+    // out of finishing their own registration.
     Route::get('/register/details', [RegisterController::class, 'showStep2'])->name('register.step2');
     Route::post('/register/details', [RegisterController::class, 'storeStep2'])->name('register.step2.store');
+});
 
+/*
+| Everything below needs a member profile. Guarded once here rather than
+| re-checked in each controller — six of them read ->profile straight
+| through, which is a 500 for any account that has not got one.
+*/
+Route::middleware(['auth', 'member'])->group(function () {
     Route::get('/me', [DashboardController::class, 'index'])->name('member.dashboard');
 
     Route::get('/me/search', [SearchController::class, 'index'])->name('member.search');

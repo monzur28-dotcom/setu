@@ -2,6 +2,7 @@
 
 use App\Http\Middleware\EnsureConnectEnabled;
 use App\Http\Middleware\EnsureGuardian;
+use App\Http\Middleware\EnsureMemberProfile;
 use App\Http\Middleware\EnsureOperator;
 use App\Http\Middleware\EnsureStaff;
 use App\Http\Middleware\SetLocale;
@@ -22,6 +23,7 @@ return Application::configure(basePath: dirname(__DIR__))
             // The mode wall. Connect routes are unreachable without an
             // explicitly enabled, separately verified Connect profile.
             'connect'  => EnsureConnectEnabled::class,
+            'member'   => EnsureMemberProfile::class,
             'guardian' => EnsureGuardian::class,
             'operator' => EnsureOperator::class,
             'staff'    => EnsureStaff::class,

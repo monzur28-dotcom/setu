@@ -17,7 +17,9 @@ class DashboardController extends Controller
         $user = $request->user();
         $profile = $user->profile;
 
-        abort_unless($profile, redirect()->route('register.step2')->getStatusCode(), '');
+        // The `member` middleware guarantees a profile before this runs.
+        // The line that used to be here called abort() with a redirect's
+        // status code and no Location header, which is a 302 to nowhere.
 
         $threadIds = MailboxThread::where('profile_a_id', $profile->id)
             ->orWhere('profile_b_id', $profile->id)->pluck('id');
