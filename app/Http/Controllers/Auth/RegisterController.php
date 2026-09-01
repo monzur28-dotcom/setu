@@ -51,7 +51,9 @@ class RegisterController extends Controller
             'candidate_name'          => ['required', 'string', 'max:60'],
             'country_code'            => ['required', 'string', 'max:5'],
             'mobile'                  => ['required', 'string', 'max:15'],
-            'email'                   => ['nullable', 'email', 'max:120'],
+            // Unique, or a duplicate is a UniqueConstraintViolation on save
+            // rather than a message on the field the member can act on.
+            'email'                   => ['nullable', 'email', 'max:120', 'unique:users,email'],
             'password'                => ['required', 'string', 'min:8'],
             'terms'                   => ['accepted'],
         ]);
@@ -62,11 +64,29 @@ class RegisterController extends Controller
             return back()->withErrors(['mobile' => __('auth.mobile_taken')])->withInput();
         }
 
-        session([
-            'reg' => $data + ['e164' => $e164],
-        ]);
+        $reg = $data + ['e164' => $e164];
 
-        $this->otp->issue($e164);
+        session(['reg' => $reg]);
+
+        // Local development with SETU_OTP_BYPASS: straight past the code
+        // screen. Testing a sign-up flow should not mean copying a six digit
+        // number out of a log file thirty times an afternoon.
+        if ($this->otpBypassed()) {
+            $user = $this->createAccount($reg, $request);
+
+            Auth::login($user);
+            session()->forget('reg');
+
+            return redirect()->route('register.step2')
+                ->with('status', __('auth.otp_bypassed'));
+        }
+
+        // issue() returns false when the hourly cap is reached. Ignoring it
+        // told the member "Code sent." and left them on a screen waiting for
+        // a message that was never going to arrive.
+        if (! $this->otp->issue($e164)) {
+            return back()->withErrors(['mobile' => __('auth.otp_too_many')])->withInput();
+        }
 
         return redirect()->route('register.otp');
     }
@@ -75,7 +95,27 @@ class RegisterController extends Controller
     {
         abort_unless(session('reg'), 302, '');
 
-        return view('auth.otp', ['mobile' => session('reg.e164')]);
+        return view('auth.otp', [
+            'mobile'      => session('reg.e164'),
+            'resendAfter' => (int) config('setu.otp.resend_after', 60),
+        ]);
+    }
+
+    /**
+     * Ask for another code. The screen has always told members they could;
+     * until now nothing implemented it, so an expired code or three wrong
+     * guesses was a dead end with no way out but starting over.
+     */
+    public function resendOtp(Request $request)
+    {
+        $reg = session('reg');
+        abort_unless($reg, 419);
+
+        if (! $this->otp->issue($reg['e164'])) {
+            return back()->withErrors(['code' => __('auth.otp_too_many')]);
+        }
+
+        return back()->with('status', __('auth.otp_resent'));
     }
 
     public function verifyOtp(Request $request)
@@ -89,7 +129,29 @@ class RegisterController extends Controller
             return back()->withErrors(['code' => __('auth.otp_invalid')]);
         }
 
-        $user = DB::transaction(function () use ($reg, $request) {
+        $user = $this->createAccount($reg, $request);
+
+        Auth::login($user);
+        session()->forget('reg');
+
+        return redirect()->route('register.step2');
+    }
+
+    /**
+     * Skip phone verification entirely. BOTH conditions are required, and
+     * deliberately so: the flag on its own must never be enough, or a stray
+     * environment variable on a production host silently switches off phone
+     * verification for everybody.
+     */
+    private function otpBypassed(): bool
+    {
+        return app()->environment('local') && config('setu.otp.bypass');
+    }
+
+    /** The account itself. One copy, shared by the OTP path and the bypass. */
+    private function createAccount(array $reg, Request $request): User
+    {
+        return DB::transaction(function () use ($reg, $request) {
             $user = new User([
                 'profile_id'              => User::generateProfileId(),
                 'registrant_relationship' => $reg['registrant_relationship'],
@@ -110,11 +172,6 @@ class RegisterController extends Controller
 
             return $user;
         });
-
-        Auth::login($user);
-        session()->forget('reg');
-
-        return redirect()->route('register.step2');
     }
 
     public function showStep2()

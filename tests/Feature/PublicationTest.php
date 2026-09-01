@@ -221,6 +221,51 @@ class PublicationTest extends TestCase
         $this->assertSame('PENDING', $profile->photos()->first()->status);
     }
 
+    /**
+     * The local bypass must be exactly that. The test that matters is not
+     * that it works, but that the flag alone cannot switch off phone
+     * verification — otherwise one stray environment variable on a real
+     * host lets anyone register against a number they do not hold.
+     */
+    public function test_the_otp_bypass_is_ignored_outside_local(): void
+    {
+        // The flag on, and the environment not local — which is already
+        // true here, since tests run as "testing". Switching the environment
+        // by hand would also switch off the test suite's CSRF exemption and
+        // fail for an unrelated reason.
+        config(['setu.otp.bypass' => true]);
+        $this->assertFalse(app()->environment('local'));
+
+        $this->post('/register', [
+            'registrant_relationship' => 'SELF',
+            'candidate_name' => 'Mallory',
+            'country_code'   => '+1',
+            'mobile'         => '5550001111',
+            'password'       => 'Str0ngPassw0rd!',
+            'terms'          => '1',
+        ])->assertRedirect('/register/verify');
+
+        // No account exists yet: the code screen still stands in the way.
+        $this->assertDatabaseCount('users', 0);
+        $this->assertGuest();
+    }
+
+    /** A duplicate email is a message on the field, not a 500. */
+    public function test_registering_with_a_taken_email_is_a_validation_error(): void
+    {
+        User::factory()->create(['email' => 'taken@example.com']);
+
+        $this->post('/register', [
+            'registrant_relationship' => 'SELF',
+            'candidate_name' => 'Someone Else',
+            'country_code'   => '+1',
+            'mobile'         => '5550002222',
+            'email'          => 'taken@example.com',
+            'password'       => 'Str0ngPassw0rd!',
+            'terms'          => '1',
+        ])->assertSessionHasErrors('email');
+    }
+
     /** Requirement 5. A free account browses; it does not learn who anyone is. */
     public function test_a_free_account_sees_the_profile_id_where_a_name_would_be(): void
     {

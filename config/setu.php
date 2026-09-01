@@ -44,6 +44,9 @@ return [
         'length'       => 6,
         'max_attempts' => (int) env('SETU_OTP_MAX_ATTEMPTS', 3),
         'resend_after' => 60,
+        // Local only. RegisterController requires environment('local') as
+        // well, so this flag alone can never switch off phone verification.
+        'bypass'       => (bool) env('SETU_OTP_BYPASS', false),
         'max_per_hour' => 3,
     ],
 

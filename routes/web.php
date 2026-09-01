@@ -70,6 +70,7 @@ Route::middleware('guest')->group(function () {
     Route::post('/register', [RegisterController::class, 'storeStep1'])->name('register.store');
     Route::get('/register/verify', [RegisterController::class, 'showOtp'])->name('register.otp');
     Route::post('/register/verify', [RegisterController::class, 'verifyOtp'])->name('register.otp.verify');
+    Route::post('/register/verify/resend', [RegisterController::class, 'resendOtp'])->name('register.otp.resend');
 
     Route::get('/login', [LoginController::class, 'show'])->name('login');
     Route::post('/login', [LoginController::class, 'login'])->name('login.attempt');
