@@ -12,7 +12,10 @@ use App\Models\ProfileVisibility;
 use App\Models\Subscription;
 use App\Models\User;
 use App\Services\ProfileReview;
+use App\Services\SmsSender;
 use App\Services\VisibilitySerializer;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -163,6 +166,61 @@ class PublicationTest extends TestCase
         $this->assertNull($user->fresh()->profile);
     }
 
+    /**
+     * The whole sign-up, end to end: details, OTP, then the profile and its
+     * required photograph. Proves the flow a real person walks, including
+     * that the photo lands on the private disk and the profile comes out
+     * PENDING rather than published.
+     */
+    public function test_a_person_can_register_all_the_way_through(): void
+    {
+        Storage::fake('photos');
+
+        // The code is stored bcrypt-hashed and leaves the system only in the
+        // message body, so that is where the test reads it. Swapped before
+        // the first request, because OtpService is a singleton and would
+        // otherwise capture the real sender.
+        CapturingSmsSender::$lastCode = null;
+        $this->instance(SmsSender::class, new CapturingSmsSender());
+
+        $this->post('/register', [
+            'registrant_relationship' => 'SELF',
+            'candidate_name' => 'Jane Walker',
+            'country_code'   => '+1',
+            'mobile'         => '5559876543',
+            'email'          => 'jane.walker@example.com',
+            'password'       => 'Str0ngPassw0rd!',
+            'terms'          => '1',
+        ])->assertRedirect('/register/verify');
+
+        $this->post('/register/verify', ['code' => CapturingSmsSender::$lastCode])
+             ->assertRedirect('/register/details');
+
+        $user = User::where('email', 'jane.walker@example.com')->firstOrFail();
+        $this->assertAuthenticatedAs($user);
+
+        $this->actingAs($user)->post('/register/details', [
+            'gender'         => 'FEMALE',
+            'date_of_birth'  => now()->subYears(27)->toDateString(),
+            'marital_status' => 'NEVER_MARRIED',
+            'religion'       => 'CHRISTIANITY',
+            'country'        => 'US',
+            'photo'          => UploadedFile::fake()->create('me.jpg', 400, 'image/jpeg'),
+        ])->assertRedirect(route('member.privacy'));
+
+        $profile = $user->fresh()->profile;
+
+        $this->assertNotNull($profile);
+        // Currency follows the country chosen, not a column default.
+        $this->assertSame('USD', $user->fresh()->currency);
+        // Nothing is published until a moderator has read it.
+        $this->assertSame('PENDING', $profile->moderation_status);
+        $this->assertSame(0, Profile::discoverable()->where('id', $profile->id)->count());
+        // The photograph exists, and is waiting for moderation like any other.
+        $this->assertSame(1, $profile->photos()->count());
+        $this->assertSame('PENDING', $profile->photos()->first()->status);
+    }
+
     /** Requirement 5. A free account browses; it does not learn who anyone is. */
     public function test_a_free_account_sees_the_profile_id_where_a_name_would_be(): void
     {
@@ -227,5 +285,24 @@ class PublicationTest extends TestCase
 
         $this->assertFalse($blurred($asker));
         $this->assertTrue($blurred($bystander));
+    }
+}
+
+/**
+ * Records the code out of the outgoing message. The log driver would work
+ * too, but reading the application's log file from a test couples the two
+ * together for no gain.
+ */
+class CapturingSmsSender extends SmsSender
+{
+    public static ?string $lastCode = null;
+
+    public function send(string $e164, string $message, string $mode = 'MATRIMONIAL', bool $critical = false): bool
+    {
+        if (preg_match('/\b(\d{6})\b/', $message, $m)) {
+            self::$lastCode = $m[1];
+        }
+
+        return true;
     }
 }

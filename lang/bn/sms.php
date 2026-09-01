@@ -6,7 +6,7 @@
  */
 
 return [
-    'candidate_confirm' => ':name আপনার জন্য :platform-এ বিয়ের প্রোফাইল তৈরি করেছেন। নিশ্চিত করুন বা সরান: :url',
-    'guardian_invite' => ':name আপনাকে :platform-এ পরিবারের সদস্য হিসেবে আমন্ত্রণ করেছেন: :url',
-    'otp' => 'আপনার :platform কোড :code। ১০ মিনিটে মেয়াদ শেষ।',
+    'candidate_confirm' => ':name আপনার জন্য :brand-এ বিয়ের প্রোফাইল তৈরি করেছেন। নিশ্চিত করুন বা সরান: :link',
+    'guardian_invite' => ':name আপনাকে :brand-এ পরিবারের সদস্য হিসেবে আমন্ত্রণ করেছেন: :link',
+    'otp' => 'আপনার :brand কোড :code। ১০ মিনিটে মেয়াদ শেষ।',
 ];

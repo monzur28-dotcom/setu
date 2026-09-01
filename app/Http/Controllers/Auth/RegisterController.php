@@ -151,7 +151,9 @@ class RegisterController extends Controller
 
         $user->forceFill(['currency' => Countries::currency($data['country'])])->save();
 
-        DB::transaction(function () use ($data, $user, $request) {
+        $district = $data['district_id'] ?? null;
+
+        DB::transaction(function () use ($data, $user, $request, $district) {
             $profile = Profile::updateOrCreate(['user_id' => $user->id], [
                 'gender'         => $data['gender'],
                 'date_of_birth'  => $data['date_of_birth'],
@@ -166,9 +168,14 @@ class RegisterController extends Controller
             ProfileLocation::updateOrCreate(['profile_id' => $profile->id], [
                 'country'          => $data['country'],
                 'city'             => $data['city'] ?? null,
-                'district_id'      => $data['district_id'] ?? null,
-                'division_id'      => $data['district_id']
-                    ? GeoDistrict::find($data['district_id'])?->division_id : null,
+                // The line below read $data['district_id'] with no default.
+                // validate() omits absent nullable keys, so registering
+                // without picking a district was a 500 — and districts only
+                // exist for the home market, so every member outside it hit
+                // it on the last step of sign-up.
+                'district_id'      => $district,
+                'division_id'      => $district
+                    ? GeoDistrict::find($district)?->division_id : null,
                 'home_district_id' => $data['home_district_id'] ?? null,
             ]);
             ProfileCareer::updateOrCreate(['profile_id' => $profile->id], [
