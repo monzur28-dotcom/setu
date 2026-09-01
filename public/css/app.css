@@ -66,6 +66,35 @@
   --gold:#C9AE6E; --gold-tint:#2A2718;
 }
 
+/* Native controls are drawn by the BROWSER, not by this stylesheet: the
+   date field's calendar icon, select arrows, checkboxes, scrollbars, the
+   picker panel itself. Without color-scheme the browser draws all of them
+   for a light page, which is why the calendar icon was invisible against a
+   dark form — dark glyph on a dark field.
+
+   Declared for every theme branch the tokens above define, so the browser's
+   idea of the page always matches ours. */
+:root{ color-scheme:light }
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){ color-scheme:dark }
+}
+:root[data-theme="dark"]{ color-scheme:dark }
+:root[data-theme="light"]{ color-scheme:light }
+
+/* The calendar glyph specifically. color-scheme fixes its colour, but on a
+   tinted field it can still sit at low contrast, so give it the field's own
+   text colour and a target big enough to hit. */
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="time"]::-webkit-calendar-picker-indicator,
+input[type="datetime-local"]::-webkit-calendar-picker-indicator{
+  cursor:pointer; opacity:.75; padding:4px; border-radius:3px;
+}
+input[type="date"]::-webkit-calendar-picker-indicator:hover,
+input[type="time"]::-webkit-calendar-picker-indicator:hover,
+input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover{
+  opacity:1; background:var(--surface-2);
+}
+
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 body{
