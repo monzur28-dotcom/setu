@@ -312,6 +312,31 @@
 // The slideshow. Interval comes from config so the admin's timing choice and
 // the page agree; a single slide, or a viewer who has asked for reduced
 // motion, simply gets a still image.
+// The globe clip is fetched only when its panel comes near the viewport, so
+// a visitor who never scrolls past the doorway never pays for it. Someone
+// who has asked for reduced motion gets the poster frame and nothing else.
+(function () {
+    var v = document.querySelector('.globe-video');
+    if (!v || !v.dataset.src) return;
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    var start = function () {
+        v.src = v.dataset.src;
+        v.play().catch(function () { /* autoplay refused: the poster stands in */ });
+    };
+
+    if (!('IntersectionObserver' in window)) { start(); return; }
+
+    var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+            if (e.isIntersecting) { start(); io.disconnect(); }
+        });
+    }, { rootMargin: '300px' });
+
+    io.observe(v);
+})();
+
 (function () {
     var slides = document.querySelectorAll('.doorway-slide');
     if (slides.length < 2) return;
