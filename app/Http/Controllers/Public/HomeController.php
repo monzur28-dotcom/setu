@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;
 use App\Models\GeoDivision;
+use App\Support\Countries;
 use App\Models\HeroSlide;
 use App\Models\Profile;
 use App\Services\LandingPageService;
@@ -34,6 +35,7 @@ class HomeController extends Controller
             'slides'    => HeroSlide::query()->where('is_active', true)
                 ->orderBy('sort_order')->orderBy('id')->get(),
             'divisions' => GeoDivision::with('districts')->get(),
+            'countries' => Countries::grouped(),
         ]);
     }
 
@@ -65,7 +67,7 @@ class HomeController extends Controller
     {
         $filters = $request->only([
             'gender', 'religion', 'age_min', 'age_max', 'district_id',
-            'division_id', 'profession', 'marital_status', 'has_photo',
+            'division_id', 'country', 'profession', 'marital_status', 'has_photo',
         ]);
 
         $results = $this->landing->query($filters, $request->user()?->profile?->id)
@@ -75,9 +77,11 @@ class HomeController extends Controller
             ->map(fn ($p) => $this->serializer->forViewer($p, $request->user()));
 
         return view('public.search', [
-            'results' => $results,
-            'cards'   => $cards,
-            'filters' => $filters,
+            'results'   => $results,
+            'cards'     => $cards,
+            'filters'   => $filters,
+            'countries' => Countries::grouped(),
+            'divisions' => GeoDivision::orderBy('name_en')->get(),
         ]);
     }
 }

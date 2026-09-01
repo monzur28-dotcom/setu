@@ -18,6 +18,7 @@ use App\Services\OtpService;
 use App\Services\PhotoIntake;
 use App\Services\ProfileReview;
 use App\Services\SmsSender;
+use App\Support\Countries;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -129,7 +130,7 @@ class RegisterController extends Controller
             'height_cm'       => ['nullable', 'integer', 'min:122', 'max:241'],
             'marital_status'  => ['required', 'string'],
             'religion'        => ['required', 'string'],
-            'country'         => ['required', 'string', 'max:2'],
+            'country'         => ['required', 'string', 'size:2'],
             'city'            => ['nullable', 'string', 'max:80'],
             'district_id'     => ['nullable', 'exists:geo_districts,id'],
             'home_district_id'=> ['nullable', 'exists:geo_districts,id'],
@@ -142,6 +143,13 @@ class RegisterController extends Controller
         ], [], ['date_of_birth' => __('auth.dob'), 'photo' => __('auth.photo')]);
 
         $user = $request->user();
+
+        // Currency follows the country the member just told us they live in.
+        // Guessing it from a column default would show a member in Berlin a
+        // price in taka on the first screen that mentions money.
+        abort_unless(Countries::exists($data['country']), 422);
+
+        $user->forceFill(['currency' => Countries::currency($data['country'])])->save();
 
         DB::transaction(function () use ($data, $user, $request) {
             $profile = Profile::updateOrCreate(['user_id' => $user->id], [

@@ -28,6 +28,13 @@ class LandingPageService
             $q->whereHas('location', fn ($l) => $l->where('division_id', $filters['division_id']));
         }
 
+        // ContentSeeder has always produced {"country":"US"} pages for the
+        // diaspora, but nothing here read the key — so every one of those
+        // pages silently listed the whole database.
+        if (! empty($filters['country'])) {
+            $q->whereHas('location', fn ($l) => $l->whereIn('country', (array) $filters['country']));
+        }
+
         if (! empty($filters['profession'])) {
             $q->whereHas('career', fn ($c) => $c->where('profession', $filters['profession']));
         }

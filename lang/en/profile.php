@@ -44,7 +44,7 @@ return [
     'name' => 'Name',
     'name_hidden_free' => 'Names are hidden on the free plan.',
     'never_public' => 'Never shown on the public profile',
-    'nid_verified' => 'NID verified',
+    'nid_verified' => 'ID verified',
     'phone_verified' => 'Phone verified',
     'photo_deleted' => 'Photo removed.',
     'photo_note_body' => 'Reviewed within four hours, location data stripped on upload, watermarked when served, and blurred to strangers unless you choose otherwise.',

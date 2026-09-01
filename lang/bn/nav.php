@@ -6,6 +6,7 @@
  */
 
 return [
+    'a_product_of' => 'একটি প্রোডাক্ট',
     'access' => 'অ্যাক্সেস অনুরোধ',
     'back_to_marriage' => 'বিয়ের অংশে ফিরুন',
     'biodata' => 'বায়োডাটা মেকার',
@@ -23,7 +24,7 @@ return [
     'login' => 'লগ ইন',
     'logout' => 'লগ আউট',
     'matches' => 'মিল',
-    'matrimonial' => 'ম্যাট্রিমোনিয়াল',
+    'matrimonial' => 'বিয়ে',
     'matrimony' => 'বিয়ে',
     'member' => 'সদস্য',
     'messages' => 'বার্তা',

@@ -34,11 +34,10 @@
                 @endforeach
             </select></div>
         <div class="field"><label>@lang('search.country')</label>
-            <select class="inp" name="country" required>
-                <option value="BD">Bangladesh</option><option value="GB">United Kingdom</option>
-                <option value="US">United States</option><option value="CA">Canada</option>
-                <option value="AE">UAE</option><option value="AU">Australia</option>
-            </select></div>
+            @include('partials.country-select', [
+                'countries' => \App\Support\Countries::grouped(),
+                'selected'  => old('country', config('setu.home_market')),
+            ])</div>
 
         <div class="field"><label>@lang('search.city')</label><input class="inp" name="city"></div>
         <div class="field"><label>@lang('search.district')</label>

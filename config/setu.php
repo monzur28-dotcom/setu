@@ -3,6 +3,19 @@
 return [
     /*
     |---------------------------------------------------------------------
+    | Who publishes this
+    |---------------------------------------------------------------------
+    | Shown in the footer, the about page and the legal notices. Kept here
+    | rather than written into templates so a rebrand is one edit.
+    */
+    'company' => [
+        'name'          => env('SETU_COMPANY_NAME', 'Royal Bengal AI'),
+        'incorporated'  => env('SETU_COMPANY_COUNTRY', 'US'),
+        'support_email' => env('SETU_SUPPORT_EMAIL', 'hello@setu.example'),
+    ],
+
+    /*
+    |---------------------------------------------------------------------
     | Platform settings
     |---------------------------------------------------------------------
     | Every business rule that a non-developer might reasonably want to
@@ -10,7 +23,21 @@ return [
     | specification, chapters 15–18.
     */
 
-    'default_country_code' => env('SETU_DEFAULT_COUNTRY_CODE', '+880'),
+    /*
+    | Where the product is being run from. Sets the default dial code, the
+    | pricing market and the currency a visitor sees before we know anything
+    | about them — not a restriction on who may join.
+    */
+    'home_market' => env('SETU_HOME_MARKET', 'US'),
+
+    'default_country_code' => env('SETU_DEFAULT_COUNTRY_CODE', '+1'),
+
+    /*
+    | The prefix on every public profile id. Deliberately not a country code:
+    | a member in Toronto with an id beginning BD is being told, every time
+    | they see it, that this product is not really for them.
+    */
+    'profile_id_prefix' => env('SETU_PROFILE_ID_PREFIX', 'ST'),
 
     'otp' => [
         'ttl'          => (int) env('SETU_OTP_TTL_SECONDS', 300),

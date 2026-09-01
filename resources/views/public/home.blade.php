@@ -118,13 +118,12 @@
                         </div>
                     </div>
                     <div class="field">
-                        <label>@lang('search.district')</label>
-                        <select class="inp" name="division_id">
-                            <option value="">@lang('search.all_districts')</option>
-                            @foreach ($divisions as $d)
-                                <option value="{{ $d->id }}">{{ $d->name() }}</option>
-                            @endforeach
-                        </select>
+                        <label>@lang('search.country')</label>
+                        @include('partials.country-select', [
+                            'countries' => $countries,
+                            'selected'  => null,
+                            'any'       => __('search.any_country'),
+                        ])
                     </div>
                     <button class="btn">@lang('home.browse')</button>
                 </div>
@@ -203,17 +202,37 @@
 
     <div class="sec">
         <div class="section-head">
-            <span class="lbl">@lang('home.browse_by')</span>
+            <span class="lbl">@lang('home.browse_by_country')</span>
         </div>
         <div class="grid g4c category-grid">
-            @foreach ($divisions as $d)
-                <a class="cat-card" href="{{ url('matrimony/'.$d->slug) }}">
-                    <span>{{ $d->name() }}</span>
+            @foreach ($countries['featured'] as $code => $label)
+                <a class="cat-card" href="{{ route('public.search', ['country' => $code]) }}">
+                    <span>{{ $label }}</span>
                     <span class="muted">→</span>
                 </a>
             @endforeach
         </div>
     </div>
+
+    {{-- Regions of the home market, where the geography data actually goes
+         deeper than the country. Other markets get country-level browsing
+         until their regions are seeded, which is honest rather than showing
+         empty pages. --}}
+    @if ($divisions->isNotEmpty())
+        <div class="sec">
+            <div class="section-head">
+                <span class="lbl">@lang('home.browse_by', ['country' => \App\Support\Countries::name(config('setu.home_market'))])</span>
+            </div>
+            <div class="grid g4c category-grid">
+                @foreach ($divisions as $d)
+                    <a class="cat-card" href="{{ url('matrimony/'.$d->slug) }}">
+                        <span>{{ $d->name() }}</span>
+                        <span class="muted">→</span>
+                    </a>
+                @endforeach
+            </div>
+        </div>
+    @endif
 </section>
 
 {{-- ============================== 2 · DATING ============================= --}}

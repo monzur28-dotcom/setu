@@ -14,7 +14,7 @@ return [
     'agreement_2_title' => 'What you control',
     'agreement_3' => 'A success fee is charged only after both people confirm the marriage in writing.',
     'agreement_3_title' => 'The success fee',
-    'bkash_hint' => 'bKash, Nagad or Rocket',
+    'bkash_hint' => 'Card, bKash, Nagad or Rocket',
     'card' => 'Card',
     'checkout' => 'Checkout',
     'deposit' => 'Refundable deposit',

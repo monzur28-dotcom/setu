@@ -46,9 +46,14 @@
         <div class="field">
             <label>@lang('auth.mobile')</label>
             <div class="row g6">
-                <select class="inp" name="country_code" style="width:96px">
-                    @foreach (['+880', '+1', '+44', '+971', '+61'] as $cc)
-                        <option value="{{ $cc }}" @selected($cc === config('setu.default_country_code'))>{{ $cc }}</option>
+                {{-- Every dial code, deduplicated: +1 appears once for the US
+                     and Canada rather than twice. A member whose country is
+                     missing from a sign-up form does not try again. --}}
+                <select class="inp" name="country_code" style="width:150px">
+                    @foreach (\App\Support\Countries::dialCodes() as $dial => $where)
+                        <option value="{{ $dial }}" @selected($dial === old('country_code', config('setu.default_country_code')))>
+                            {{ $dial }} · {{ $where }}
+                        </option>
                     @endforeach
                 </select>
                 <input class="inp" name="mobile" value="{{ old('mobile') }}" inputmode="tel" required>

@@ -5,7 +5,7 @@
 <aside class="rail" id="rail">
     <div class="rail-head">
         <a class="mark" href="{{ $connect ? route('connect.deck') : route('home') }}">
-            <span class="glyph">{{ $connect ? 'প' : 'সে' }}</span>
+            <span class="glyph">@include('partials.mark', ['connect' => $connect, 'size' => 20])</span>
             <span>
                 <span class="wordmark">{{ config('app.name') }}</span><br>
                 <span class="modetag">{{ $connect ? __('nav.connect') : __('nav.matrimonial') }}</span>
@@ -89,6 +89,14 @@
             @else
                 <a class="btn quiet sm" href="{{ route('login') }}">@lang('nav.login')</a>
             @endauth
+        </div>
+
+        {{-- Who publishes this, and where they answer for it. Kept in config
+             so a rebrand is one edit rather than a search across templates. --}}
+        <div class="rail-by">
+            {{ __('nav.a_product_of') }}
+            <strong>{{ config('setu.company.name') }}</strong>
+            <span class="xs">{{ \App\Support\Countries::name(config('setu.company.incorporated')) }}</span>
         </div>
     </div>
 </aside>

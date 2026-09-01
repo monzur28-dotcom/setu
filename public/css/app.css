@@ -501,3 +501,35 @@ select.inp{appearance:none; background-image:linear-gradient(45deg,transparent 5
 @media (prefers-reduced-motion: reduce){
   .doorway-slide{transition:none}
 }
+
+/* ============ BRAND MARK ============
+   The bridge. Sized by the SVG itself; the tile just gives it a ground. */
+.mark .glyph{border-radius:8px}
+.mark-glyph{display:block; color:currentColor}
+
+/* Who publishes this. Quiet by design — it belongs at the bottom of the
+   rail, not competing with the product's own name above it. */
+.rail-by{
+  margin-top:10px; padding-top:10px; border-top:1px solid var(--line);
+  font-size:11px; line-height:1.5; color:var(--muted);
+}
+.rail-by strong{display:block; color:var(--body); font-weight:600}
+.rail-by .xs{font-size:10px}
+
+/* ============ SEARCH FILTER BAR ============
+   Filters belong on the results page: a global audience arrives at /search
+   from country tiles, shared links and search engines, not only from the
+   front page. */
+.filter-bar{
+  display:grid; gap:12px; align-items:end;
+  grid-template-columns:repeat(5, minmax(0,1fr)) auto auto;
+}
+.filter-bar .has-photo{white-space:nowrap; padding-bottom:9px}
+@media (max-width:1080px){
+  .filter-bar{grid-template-columns:repeat(3, minmax(0,1fr))}
+  .filter-bar .has-photo,.filter-bar .row.g6{grid-column:span 3}
+}
+@media (max-width:640px){
+  .filter-bar{grid-template-columns:1fr}
+  .filter-bar .has-photo,.filter-bar .row.g6{grid-column:auto}
+}

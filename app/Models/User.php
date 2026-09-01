@@ -53,10 +53,17 @@ class User extends Authenticatable
         return $this->mobile_enc ? Crypt::decryptString($this->mobile_enc) : null;
     }
 
+    /**
+     * The public identifier. The prefix is configurable and deliberately not
+     * a country code — a member in Toronto whose id starts with BD is being
+     * told, every time they see it, that this product is not really theirs.
+     */
     public static function generateProfileId(): string
     {
+        $prefix = strtoupper(config('setu.profile_id_prefix', 'ST'));
+
         do {
-            $id = 'BD'.random_int(1000000, 9999999);
+            $id = $prefix.random_int(1000000, 9999999);
         } while (static::where('profile_id', $id)->exists());
 
         return $id;

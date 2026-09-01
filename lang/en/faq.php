@@ -17,5 +17,5 @@ return [
     'q3' => 'Can my family see my messages?',
     'q4' => 'Someone made a profile for me. What can I do?',
     'q5' => 'Is my profile on Google?',
-    'q6' => 'What happens to my NID photo?',
+    'q6' => 'What happens to my ID document?',
 ];

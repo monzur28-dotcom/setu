@@ -6,6 +6,7 @@
  */
 
 return [
+    'a_product_of' => 'A product of',
     'access' => 'Access requests',
     'back_to_marriage' => 'Back to marriage side',
     'biodata' => 'Biodata maker',
@@ -23,7 +24,7 @@ return [
     'login' => 'Log in',
     'logout' => 'Log out',
     'matches' => 'Matches',
-    'matrimonial' => 'Matrimonial',
+    'matrimonial' => 'Matrimony',
     'matrimony' => 'Matrimony',
     'member' => 'Member',
     'messages' => 'Messages',

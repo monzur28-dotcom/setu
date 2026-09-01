@@ -101,6 +101,12 @@ return [
         'UNCLE' => 'Uncle',
     ],
     'religion' => [
+        'SIKHISM' => 'Sikhism',
+        'JUDAISM' => 'Judaism',
+        'JAINISM' => 'Jainism',
+        'ZOROASTRIANISM' => 'Zoroastrianism',
+        'SPIRITUAL' => 'Spiritual, not religious',
+        'NOT_RELIGIOUS' => 'Not religious',
         'BUDDHISM' => 'Buddhism',
         'CHRISTIANITY' => 'Christianity',
         'HINDUISM' => 'Hinduism',

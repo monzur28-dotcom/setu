@@ -101,6 +101,12 @@ return [
         'UNCLE' => 'মামা/চাচা',
     ],
     'religion' => [
+        'SIKHISM' => 'শিখ',
+        'JUDAISM' => 'ইহুদি',
+        'JAINISM' => 'জৈন',
+        'ZOROASTRIANISM' => 'পারসি',
+        'SPIRITUAL' => 'ধর্মবিশ্বাসী, প্রাতিষ্ঠানিক নয়',
+        'NOT_RELIGIOUS' => 'ধর্ম পালন করি না',
         'BUDDHISM' => 'বৌদ্ধ',
         'CHRISTIANITY' => 'খ্রিষ্টান',
         'HINDUISM' => 'হিন্দু',
