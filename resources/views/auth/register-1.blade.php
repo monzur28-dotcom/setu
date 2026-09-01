@@ -66,8 +66,8 @@
     </div>
 
     <div class="field">
-        <label>@lang('auth.password')</label>
-        <input class="inp" type="password" name="password" required minlength="8">
+        <label>@lang('auth.password_label')</label>
+        <input class="inp" type="password" name="password" autocomplete="new-password" required minlength="8">
     </div>
 
     <label class="row g8 sm center">

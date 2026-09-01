@@ -12,8 +12,8 @@
         <input class="inp" name="identifier" value="{{ old('identifier') }}" autofocus required>
     </div>
     <div class="field">
-        <label>@lang('auth.password')</label>
-        <input class="inp" type="password" name="password" required>
+        <label>@lang('auth.password_label')</label>
+        <input class="inp" type="password" name="password" autocomplete="current-password" required>
     </div>
     <button class="btn lg">@lang('nav.login')</button>
 </form>

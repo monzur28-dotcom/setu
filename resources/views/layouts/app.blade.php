@@ -56,6 +56,58 @@ function toggleRail() {
     document.getElementById('scrim').classList.toggle('on');
 }
 </script>
+<script>
+// A reveal toggle on every password field. Added here rather than in each
+// form so a field added later gets one without anybody remembering to.
+//
+// Progressive enhancement: with JavaScript off the input is exactly what it
+// was, which is the right failure for a login form.
+(function () {
+    var SHOW = @json(__('auth.show_password'));
+    var HIDE = @json(__('auth.hide_password'));
+
+    var EYE = '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 12S5 5.5 12 5.5 22.5 12 22.5 12 19 18.5 12 18.5 1.5 12 1.5 12Z"/><circle cx="12" cy="12" r="3.2"/></svg>';
+    var OFF = '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l18 18"/><path d="M10.6 6.1A9.9 9.9 0 0 1 12 6c7 0 10.5 6 10.5 6a17 17 0 0 1-3.6 4.2M6.3 7.8A17 17 0 0 0 1.5 12S5 18 12 18c1.3 0 2.5-.2 3.5-.6"/><path d="M9.8 9.9a3.2 3.2 0 0 0 4.4 4.4"/></svg>';
+
+    document.querySelectorAll('input[type="password"]').forEach(function (input) {
+        if (input.dataset.pwReady) return;
+        input.dataset.pwReady = '1';
+
+        var wrap = document.createElement('div');
+        wrap.className = 'pw-field';
+        input.parentNode.insertBefore(wrap, input);
+        wrap.appendChild(input);
+
+        var btn = document.createElement('button');
+        // Never a submit button: a reveal toggle that posts the form is a
+        // login screen that logs you in when you try to check your typing.
+        btn.type = 'button';
+        btn.className = 'pw-toggle';
+        btn.innerHTML = EYE;
+        btn.setAttribute('aria-label', SHOW);
+        btn.setAttribute('aria-pressed', 'false');
+        wrap.appendChild(btn);
+
+        var setShown = function (shown) {
+            input.type = shown ? 'text' : 'password';
+            btn.innerHTML = shown ? OFF : EYE;
+            btn.setAttribute('aria-label', shown ? HIDE : SHOW);
+            btn.setAttribute('aria-pressed', shown ? 'true' : 'false');
+        };
+
+        btn.addEventListener('click', function () {
+            setShown(input.type === 'password');
+            input.focus();
+        });
+
+        // Re-hide on submit, so a password is not left in plain text on the
+        // screen for whoever walks past next, or on the back button.
+        if (input.form) {
+            input.form.addEventListener('submit', function () { setShown(false); });
+        }
+    });
+})();
+</script>
 @stack('scripts')
 </body>
 </html>
