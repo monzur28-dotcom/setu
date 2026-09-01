@@ -30,6 +30,13 @@ class SiteSetting extends Model
         'door_tint' => [56, 0, 100],
         // The frost behind them, in pixels.
         'door_blur' => [16, 0, 30],
+
+        // Typography. Ranges, not free numbers: 900 on a face that stops at
+        // 700 is synthesised by the browser into something smeared, and
+        // very light body text fails contrast for a lot of readers.
+        'base_font_px'   => [15, 13, 19],
+        'heading_weight' => [500, 400, 700],
+        'body_weight'    => [400, 300, 600],
     ];
 
     public static function all_(): array

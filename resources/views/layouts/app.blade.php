@@ -17,8 +17,14 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Hind+Siliguri:wght@400;500;600&family=Noto+Serif+Bengali:wght@500;600&display=swap">
+    <link rel="stylesheet" href="{{ \App\Support\Theme::fontUrl() }}">
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+
+    {{-- The administrator's appearance settings. Emitted after app.css so
+         it wins on cascade order, with no !important anywhere. --}}
+    <style>{!! \App\Support\Theme::css() !!}</style>
+
+    @stack('head')
 </head>
 <body>
 <div class="scrim" id="scrim" onclick="toggleRail()"></div>

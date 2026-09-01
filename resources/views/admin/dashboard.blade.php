@@ -29,6 +29,7 @@
     <a class="btn ghost" href="{{ route('admin.fees') }}">@lang('admin.success_fees')</a>
     <a class="btn ghost" href="{{ route('admin.words') }}">@lang('admin.words')</a>
     <a class="btn ghost" href="{{ route('admin.hero') }}">@lang('admin.hero')</a>
+    <a class="btn ghost" href="{{ route('admin.appearance') }}">@lang('admin.appearance')</a>
     <a class="btn ghost" href="{{ route('admin.seo') }}">@lang('admin.seo')</a>
 </div>
 

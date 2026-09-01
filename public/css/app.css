@@ -22,6 +22,8 @@
   --gold:#A87C22; --gold-tint:#F6EEDC;
   --ok:#2F6B57; --warn:#8A5B0E; --bad:#A02226;
   --shadow:0 1px 0 rgba(35,19,24,.04), 0 8px 24px -16px rgba(35,19,24,.22);
+  /* Connect's own colour, used where the two products sit side by side. */
+  --connect-brand:#1B5249;
 }
 :root[data-mode="connect"]{
   --ground:#F3F8F6; --surface:#FFFFFF; --surface-2:#E9F1EE; --surface-3:#DDE9E5;
@@ -40,6 +42,7 @@
     --gold:#D6AB52; --gold-tint:#332916;
     --ok:#63B594; --warn:#D2A254; --bad:#E27C80;
     --shadow:0 1px 0 rgba(0,0,0,.3), 0 10px 28px -18px rgba(0,0,0,.8);
+    --connect-brand:#6FBFAE;
   }
   :root:not([data-theme="light"])[data-mode="connect"]{
     --ground:#0D1615; --surface:#15211F; --surface-2:#1D2B28; --surface-3:#243530;
@@ -57,6 +60,7 @@
   --gold:#D6AB52; --gold-tint:#332916;
   --ok:#63B594; --warn:#D2A254; --bad:#E27C80;
   --shadow:0 1px 0 rgba(0,0,0,.3), 0 10px 28px -18px rgba(0,0,0,.8);
+  --connect-brand:#6FBFAE;
 }
 :root[data-theme="dark"][data-mode="connect"]{
   --ground:#0D1615; --surface:#15211F; --surface-2:#1D2B28; --surface-3:#243530;
@@ -95,16 +99,35 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover{
   opacity:1; background:var(--surface-2);
 }
 
+/* ============ TYPOGRAPHY TOKENS ============
+   Declared as variables so the appearance screen has something to change.
+   These are the defaults; whatever an administrator sets is emitted in the
+   page head, after this file, and wins on cascade order alone — no
+   !important, no specificity games.
+
+   The Bengali stack is deliberately NOT settable. Latin display faces
+   mostly have no Bengali glyphs, so letting it be swapped would render
+   half the site in a fallback nobody chose. */
+:root{
+  --font-head:Newsreader,"Noto Serif Bengali",Georgia,serif;
+  --font-body:"IBM Plex Sans","Hind Siliguri",system-ui,-apple-system,Segoe UI,sans-serif;
+  --font-mono:"IBM Plex Mono",ui-monospace,monospace;
+  --font-bn:"Hind Siliguri","IBM Plex Sans",sans-serif;
+  --font-size:15px;
+  --w-body:400;
+  --w-head:500;
+}
+
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 body{
   margin:0; background:var(--ground); color:var(--body);
-  font-family:"IBM Plex Sans","Hind Siliguri",system-ui,-apple-system,Segoe UI,sans-serif;
-  font-size:15px; line-height:1.6;
+  font-family:var(--font-body);
+  font-size:var(--font-size); font-weight:var(--w-body); line-height:1.6;
   transition:background .45s ease, color .45s ease;
 }
-:lang(bn){font-family:"Hind Siliguri","IBM Plex Sans",sans-serif; line-height:1.85}
-h1,h2,h3,h4{font-family:Newsreader,"Noto Serif Bengali",Georgia,serif; color:var(--ink); font-weight:500; margin:0; text-wrap:balance; letter-spacing:-.01em}
+:lang(bn){font-family:var(--font-bn); line-height:1.85}
+h1,h2,h3,h4{font-family:var(--font-head); color:var(--ink); font-weight:var(--w-head); margin:0; text-wrap:balance; letter-spacing:-.01em}
 p{margin:0}
 a{color:inherit}
 button,input,select,textarea{font:inherit; color:inherit}
@@ -112,10 +135,10 @@ button,input,select,textarea{font:inherit; color:inherit}
 @media (prefers-reduced-motion: reduce){*{animation-duration:.01ms !important; transition-duration:.01ms !important}}
 
 /* ============ PRIMITIVES ============ */
-.mono{font-family:"IBM Plex Mono",ui-monospace,monospace; font-variant-numeric:tabular-nums}
-.lbl{font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted)}
-.serif{font-family:Newsreader,"Noto Serif Bengali",serif}
-.bn{font-family:"Hind Siliguri",sans-serif}
+.mono{font-family:var(--font-mono); font-variant-numeric:tabular-nums}
+.lbl{font-family:var(--font-mono); font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted)}
+.serif{font-family:var(--font-head)}
+.bn{font-family:var(--font-bn)}
 .muted{color:var(--muted)}
 .sm{font-size:13px}
 .xs{font-size:12px}
@@ -160,7 +183,7 @@ button,input,select,textarea{font:inherit; color:inherit}
 .chip.lock{background:transparent; border-style:dashed; color:var(--muted)}
 
 .field{display:flex; flex-direction:column; gap:5px}
-.field > label{font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:.13em; text-transform:uppercase; color:var(--muted)}
+.field > label{font-family:var(--font-mono); font-size:10.5px; letter-spacing:.13em; text-transform:uppercase; color:var(--muted)}
 .inp{
   padding:9px 11px; background:var(--surface); border:1px solid var(--line-strong); border-radius:3px;
   font-size:14px; width:100%; transition:border-color .15s;
@@ -172,7 +195,7 @@ select.inp{appearance:none; background-image:linear-gradient(45deg,transparent 5
 
 /* biodata-sheet style label/value rows — the core visual idea */
 .sheet{display:grid; grid-template-columns:minmax(120px,150px) 1fr; border-top:1px solid var(--line)}
-.sheet > dt{padding:9px 0; border-bottom:1px solid var(--line); font-family:"IBM Plex Mono",monospace;
+.sheet > dt{padding:9px 0; border-bottom:1px solid var(--line); font-family:var(--font-mono);
   font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); align-self:center}
 .sheet > dd{padding:9px 0; border-bottom:1px solid var(--line); margin:0; color:var(--ink); font-size:14px}
 .sheet > dd.locked{color:var(--muted); font-style:italic}
@@ -180,7 +203,7 @@ select.inp{appearance:none; background-image:linear-gradient(45deg,transparent 5
 /* photo tile — blurred monogram, which is the real product default */
 .ph{position:relative; overflow:hidden; background:var(--surface-2); border:1px solid var(--line);
   display:grid; place-items:center; border-radius:3px; aspect-ratio:1; color:var(--ink)}
-.ph .mono-init{font-family:Newsreader,serif; font-size:calc(var(--sz,72px)*.42); letter-spacing:.02em; opacity:.9}
+.ph .mono-init{font-family:var(--font-head); font-size:calc(var(--sz,72px)*.42); letter-spacing:.02em; opacity:.9}
 .ph.blur .mono-init{filter:blur(9px); opacity:.55}
 .ph.blur::after{content:""; position:absolute; inset:0;
   background:repeating-linear-gradient(45deg,transparent,transparent 7px,color-mix(in srgb,var(--line) 55%,transparent) 7px,color-mix(in srgb,var(--line) 55%,transparent) 8px)}
@@ -197,9 +220,9 @@ select.inp{appearance:none; background-image:linear-gradient(45deg,transparent 5
 .rail-head{padding:18px 18px 14px; border-bottom:1px solid var(--line)}
 .mark{display:flex; align-items:center; gap:9px; text-decoration:none}
 .mark .glyph{width:28px; height:28px; border-radius:3px; background:var(--brand); color:var(--on-brand);
-  display:grid; place-items:center; font-family:Newsreader,serif; font-size:16px; transition:background .45s ease}
-.mark .wordmark{font-family:Newsreader,serif; font-size:19px; color:var(--ink); letter-spacing:-.01em}
-.mark .modetag{font-family:"IBM Plex Mono",monospace; font-size:9.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--brand)}
+  display:grid; place-items:center; font-family:var(--font-head); font-size:16px; transition:background .45s ease}
+.mark .wordmark{font-family:var(--font-head); font-size:19px; color:var(--ink); letter-spacing:-.01em}
+.mark .modetag{font-family:var(--font-mono); font-size:9.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--brand)}
 .navgroup{padding:12px 10px 4px}
 .navgroup > .lbl{padding:0 8px 6px}
 .navitem{display:flex; align-items:center; gap:9px; padding:7px 9px; border-radius:3px; cursor:pointer;
@@ -207,7 +230,7 @@ select.inp{appearance:none; background-image:linear-gradient(45deg,transparent 5
 .navitem:hover{background:var(--surface-2); color:var(--ink)}
 .navitem.on{background:var(--brand-tint); color:var(--brand-deep); border-color:color-mix(in srgb,var(--brand) 22%,transparent)}
 .navitem .ic{width:15px; text-align:center; opacity:.75; font-size:12px}
-.navitem .tail{margin-left:auto; font-family:"IBM Plex Mono",monospace; font-size:10px; color:var(--muted)}
+.navitem .tail{margin-left:auto; font-family:var(--font-mono); font-size:10px; color:var(--muted)}
 .rail-foot{margin-top:auto; padding:12px; border-top:1px solid var(--line)}
 
 .main{min-width:0; display:flex; flex-direction:column}
@@ -216,7 +239,7 @@ select.inp{appearance:none; background-image:linear-gradient(45deg,transparent 5
   backdrop-filter:blur(10px); border-bottom:1px solid var(--line); padding:10px 22px;
   display:flex; align-items:center; gap:12px; transition:background .45s ease, border-color .45s ease;
 }
-.crumb{font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted)}
+.crumb{font-family:var(--font-mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted)}
 .view{padding:26px 22px 64px; max-width:1080px; width:100%; margin:0 auto; animation:rise .34s cubic-bezier(.2,.7,.3,1)}
 @keyframes rise{from{opacity:0; transform:translateY(7px)} to{opacity:1; transform:none}}
 
@@ -249,7 +272,7 @@ select.inp{appearance:none; background-image:linear-gradient(45deg,transparent 5
 .hero-badge{
   display:inline-flex; align-items:center; gap:8px; padding:7px 12px; border-radius:999px;
   background:var(--surface); border:1px solid var(--line); color:var(--brand-deep); font-size:11px;
-  font-family:"IBM Plex Mono",monospace; letter-spacing:.08em; text-transform:uppercase;
+  font-family:var(--font-mono); letter-spacing:.08em; text-transform:uppercase;
 }
 .hero-copy h1{
   font-size:clamp(2.4rem, 4vw, 4.4rem); line-height:1.02; margin-top:12px; letter-spacing:-.04em;
@@ -259,7 +282,7 @@ select.inp{appearance:none; background-image:linear-gradient(45deg,transparent 5
 .hero-actions{display:flex; gap:12px; flex-wrap:wrap; margin-top:20px}
 .hero-stats{display:flex; gap:18px; flex-wrap:wrap; margin-top:26px}
 .hero-stats div{display:flex; flex-direction:column; gap:4px; min-width:110px}
-.hero-stats strong{font-family:Newsreader,serif; font-size:2rem; color:var(--ink); line-height:1}
+.hero-stats strong{font-family:var(--font-head); font-size:2rem; color:var(--ink); line-height:1}
 .hero-stats span{font-size:12px; color:var(--muted)}
 /* The montage. Brides and grooms who made their photograph public — the
    single strongest thing a matrimonial front page can show. */
@@ -277,7 +300,7 @@ select.inp{appearance:none; background-image:linear-gradient(45deg,transparent 5
 .collage-tile:hover{border-color:var(--brand)}
 .collage-tile img{display:block; width:100%; aspect-ratio:4/5; object-fit:cover; background:var(--surface-2)}
 .collage-tile .cap{display:flex; flex-direction:column; gap:2px; padding:8px 10px 10px}
-.collage-tile .nm{font-family:Newsreader,serif; font-size:15px; color:var(--ink); line-height:1.2}
+.collage-tile .nm{font-family:var(--font-head); font-size:15px; color:var(--ink); line-height:1.2}
 .hero-art-note{font-size:11px; color:var(--muted); text-align:center; margin-top:6px}
 
 /* The search bar runs the full width of the hero, under both columns. */
@@ -285,7 +308,7 @@ select.inp{appearance:none; background-image:linear-gradient(45deg,transparent 5
   grid-column:1 / -1; position:relative; z-index:1; padding:16px 18px;
   background:var(--surface); border:1px solid var(--line); border-radius:18px; box-shadow:var(--shadow);
 }
-.mini-heading{font-family:"IBM Plex Mono",monospace; font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin-bottom:12px}
+.mini-heading{font-family:var(--font-mono); font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin-bottom:12px}
 .search-row{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)) auto; gap:12px; align-items:end; margin-bottom:9px}
 .search-row .btn{height:38px; padding-inline:26px}
 .text-link{color:var(--brand-deep); text-decoration:none; font-weight:600; font-size:13px}
@@ -357,7 +380,7 @@ select.inp{appearance:none; background-image:linear-gradient(45deg,transparent 5
   display:flex; flex-direction:column; transition:border-color .15s, transform .15s}
 .pcard:hover{border-color:var(--line-strong); transform:translateY(-1px)}
 .pcard .body{padding:11px 12px; display:flex; flex-direction:column; gap:5px; flex:1}
-.pcard .nm{font-family:Newsreader,serif; font-size:16px; color:var(--ink); line-height:1.2}
+.pcard .nm{font-family:var(--font-head); font-size:16px; color:var(--ink); line-height:1.2}
 .pcard .meta{font-size:12px; color:var(--muted); line-height:1.45}
 .pcard .acts{display:flex; gap:6px; padding:0 12px 12px}
 
@@ -367,7 +390,7 @@ select.inp{appearance:none; background-image:linear-gradient(45deg,transparent 5
 .note .t{font-weight:600; color:var(--ink); display:block; margin-bottom:3px; font-size:12.5px}
 
 .tbl{width:100%; border-collapse:collapse; font-size:13.5px}
-.tbl th{text-align:left; font-family:"IBM Plex Mono",monospace; font-size:10px; letter-spacing:.12em;
+.tbl th{text-align:left; font-family:var(--font-mono); font-size:10px; letter-spacing:.12em;
   text-transform:uppercase; color:var(--muted); font-weight:400; padding:8px 10px; border-bottom:1px solid var(--line-strong)}
 .tbl td{padding:9px 10px; border-bottom:1px solid var(--line); color:var(--body); vertical-align:top}
 .tbl tr:last-child td{border-bottom:0}
@@ -380,20 +403,20 @@ select.inp{appearance:none; background-image:linear-gradient(45deg,transparent 5
 
 .step{display:flex; gap:11px; align-items:flex-start}
 .step .n{flex:none; width:23px; height:23px; border-radius:50%; border:1px solid var(--brand);
-  color:var(--brand); display:grid; place-items:center; font-family:"IBM Plex Mono",monospace; font-size:11px}
+  color:var(--brand); display:grid; place-items:center; font-family:var(--font-mono); font-size:11px}
 .step.done .n{background:var(--brand); color:var(--on-brand)}
 
 .plan{display:flex; flex-direction:column; border:1px solid var(--line); border-radius:3px; background:var(--surface); overflow:hidden}
 .plan.feat{border-color:var(--brand); box-shadow:var(--shadow)}
 .plan .ptop{padding:16px 16px 14px; border-bottom:1px solid var(--line)}
-.plan .price{font-family:Newsreader,serif; font-size:32px; color:var(--ink); line-height:1}
+.plan .price{font-family:var(--font-head); font-size:32px; color:var(--ink); line-height:1}
 .plan .per{font-size:12px; color:var(--muted)}
 .plan ul{list-style:none; margin:0; padding:14px 16px; display:flex; flex-direction:column; gap:8px; font-size:13px; flex:1}
 .plan li{display:flex; gap:8px; align-items:flex-start}
 .plan li .tick{color:var(--ok); flex:none; font-size:12px; line-height:1.5}
 .plan li .no{color:var(--muted); flex:none; font-size:12px; line-height:1.5}
 .plan .pfoot{padding:0 16px 16px}
-.ribbon{background:var(--brand); color:var(--on-brand); font-family:"IBM Plex Mono",monospace;
+.ribbon{background:var(--brand); color:var(--on-brand); font-family:var(--font-mono);
   font-size:9.5px; letter-spacing:.14em; text-transform:uppercase; text-align:center; padding:4px}
 
 .deck{max-width:400px; margin:0 auto; position:relative}
@@ -494,18 +517,23 @@ select.inp{appearance:none; background-image:linear-gradient(45deg,transparent 5
   .door:hover{background:var(--surface)}
 }
 .door-tag{
-  font-family:"IBM Plex Mono",monospace; font-size:10px; letter-spacing:.14em;
+  font-family:var(--font-mono); font-size:10px; letter-spacing:.14em;
   text-transform:uppercase; color:var(--muted);
 }
-.door-h{font-family:Newsreader,serif; font-size:1.55rem; line-height:1.15; color:var(--ink)}
+.door-h{font-family:var(--font-head); font-size:1.55rem; line-height:1.15; color:var(--ink)}
 .door p{font-size:13.5px; color:var(--body); margin:0}
 .door-cta{margin-top:6px; font-size:13px; font-weight:600}
 /* Each door wears its own product's colour, which is the fastest way to say
    these are two different things without a paragraph explaining it. */
-.door-matrimony:hover{border-color:#8E1B2E}
-.door-matrimony .door-cta{color:#8E1B2E}
-.door-dating:hover{border-color:#1B5249}
-.door-dating .door-cta{color:#1B5249}
+/* The matrimony door follows the brand colour, so the appearance screen
+   reaches it like everything else. The dating door does NOT: Connect's teal
+   is that product's identity, and the two doors looking alike is exactly
+   what the doorway exists to prevent. It gets its own token rather than a
+   literal, so it is findable. */
+.door-matrimony:hover{border-color:var(--brand)}
+.door-matrimony .door-cta{color:var(--brand-deep)}
+.door-dating:hover{border-color:var(--connect-brand)}
+.door-dating .door-cta{color:var(--connect-brand)}
 
 /* ============ THE TWO HALVES ============ */
 .half{margin-top:56px; scroll-margin-top:70px}
@@ -625,7 +653,7 @@ select.inp{appearance:none; background-image:linear-gradient(45deg,transparent 5
 
 .globe-caption{
   text-align:center; font-size:11px; color:var(--muted);
-  font-family:"IBM Plex Mono",monospace; letter-spacing:.1em; text-transform:uppercase;
+  font-family:var(--font-mono); letter-spacing:.1em; text-transform:uppercase;
 }
 
 @media (max-width:900px){ .globe-panel{max-width:360px} }
@@ -683,3 +711,35 @@ input[type="range"]{
   width:100%; accent-color:var(--brand); height:26px; cursor:pointer; background:transparent;
 }
 @media (max-width:900px){ .glass-admin-grid{grid-template-columns:1fr} }
+
+/* ============ ADMIN: APPEARANCE ============ */
+.theme-grid{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:22px; align-items:start}
+.theme-preview-wrap{position:sticky; top:78px; display:flex; flex-direction:column; gap:8px}
+/* The preview scopes the same custom properties the site uses, so what it
+   shows is the result applied to a smaller area rather than an imitation. */
+.theme-preview{
+  background:var(--ground); border:1px solid var(--line); border-radius:18px; padding:22px;
+  font-family:var(--font-body); font-size:var(--font-size); font-weight:var(--w-body);
+}
+.theme-preview h2{font-family:var(--font-head); font-weight:var(--w-head); font-size:2rem; margin:8px 0 0}
+.theme-preview .sub{color:var(--muted); margin:6px 0 16px}
+.preview-doors{position:relative; border-radius:14px; overflow:hidden; padding:18px; min-height:150px}
+.preview-doors img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover}
+.preview-doors .door{position:relative; max-width:none}
+
+.pair-option{
+  display:flex; align-items:flex-start; gap:10px; padding:11px 13px; cursor:pointer;
+  border:1px solid var(--line); border-radius:12px; background:var(--surface);
+}
+.pair-option.on{border-color:var(--brand); background:var(--brand-tint)}
+.pair-option .grow{display:flex; flex-direction:column; gap:2px}
+.pair-name{font-size:16px; color:var(--ink); line-height:1.25}
+
+input[type="color"]{
+  width:52px; height:34px; padding:2px; cursor:pointer;
+  border:1px solid var(--line); border-radius:8px; background:var(--surface);
+}
+@media (max-width:1000px){
+  .theme-grid{grid-template-columns:1fr}
+  .theme-preview-wrap{position:static}
+}

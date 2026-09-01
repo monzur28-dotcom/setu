@@ -9,65 +9,8 @@
     <span class="sub">@lang('admin.hero_sub', ['seconds' => round($interval / 1000)])</span>
 </div>
 
-{{--
-    The doorway cards' glass. The preview is a real .door on a real slide, so
-    what an administrator drags is what a visitor gets — a swatch that only
-    approximated it would be worse than no preview.
---}}
-<form method="POST" action="{{ route('admin.appearance') }}" class="card pad sec glass-admin"
-      style="--door-tint: {{ $tint }}; --door-blur: {{ $blur }}px">@csrf
-    <span class="lbl">@lang('admin.appearance')</span>
-    <p class="xs muted" style="margin:6px 0 16px">@lang('admin.appearance_sub')</p>
+<p class="sec"><a class="btn ghost" href="{{ route('admin.appearance') }}">@lang('admin.appearance')</a></p>
 
-    <div class="glass-admin-grid">
-        <div class="stack g14">
-            <div class="field">
-                <label>@lang('admin.door_tint') — <span class="mono" id="tint-out">{{ $tint }}</span>%</label>
-                <input type="range" name="door_tint" id="tint" min="0" max="100" value="{{ $tint }}">
-                <span class="xs muted">@lang('admin.door_tint_hint')</span>
-            </div>
-            <div class="field">
-                <label>@lang('admin.door_blur') — <span class="mono" id="blur-out">{{ $blur }}</span>px</label>
-                <input type="range" name="door_blur" id="blur" min="0" max="30" value="{{ $blur }}">
-                <span class="xs muted">@lang('admin.door_blur_hint')</span>
-            </div>
-            <button class="btn">@lang('common.save')</button>
-        </div>
-
-        <div class="glass-preview">
-            @if ($slides->isNotEmpty())
-                <img src="{{ $slides->first()->url() }}" alt="">
-            @endif
-            <div class="door door-matrimony" style="pointer-events:none">
-                <span class="door-tag">@lang('nav.matrimony')</span>
-                <span class="door-h">@lang('home.door_matrimony_h')</span>
-                <p>@lang('home.door_matrimony_body')</p>
-            </div>
-        </div>
-    </div>
-</form>
-
-@push('scripts')
-<script>
-// Drives the same custom properties the front page uses, on the same .door
-// markup, so the preview cannot drift from the real thing.
-(function () {
-    var form = document.querySelector('.glass-admin');
-    if (!form) return;
-
-    [['tint', 'tint-out', '--door-tint', ''],
-     ['blur', 'blur-out', '--door-blur', 'px']].forEach(function (pair) {
-        var input  = document.getElementById(pair[0]);
-        var output = document.getElementById(pair[1]);
-
-        input.addEventListener('input', function () {
-            output.textContent = input.value;
-            form.style.setProperty(pair[2], input.value + pair[3]);
-        });
-    });
-})();
-</script>
-@endpush
 <form method="POST" action="{{ route('admin.hero.add') }}" enctype="multipart/form-data"
       class="card pad row g10 wrap" style="align-items:flex-end">@csrf
     <div class="field grow">

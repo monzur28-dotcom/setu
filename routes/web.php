@@ -197,7 +197,8 @@ Route::middleware(['auth', 'staff'])->prefix('admin')->name('admin.')->group(fun
     Route::post('/hero', [AdminController::class, 'addSlide'])->name('hero.add');
     Route::patch('/hero/{slide}', [AdminController::class, 'updateSlide'])->name('hero.update');
     Route::delete('/hero/{slide}', [AdminController::class, 'removeSlide'])->name('hero.remove');
-    Route::post('/appearance', [AdminController::class, 'appearance'])->name('appearance');
+    Route::get('/appearance', [AdminController::class, 'showAppearance'])->name('appearance');
+    Route::post('/appearance', [AdminController::class, 'appearance'])->name('appearance.save');
     // The pre-publication word list. Admin-owned data; the behaviour it
     // drives lives in WordFilter.
     Route::get('/words', [AdminController::class, 'words'])->name('words');

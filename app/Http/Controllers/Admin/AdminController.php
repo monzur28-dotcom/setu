@@ -19,7 +19,9 @@ use App\Models\User;
 use App\Services\LandingPageService;
 use App\Services\ProfileReview;
 use App\Services\WordFilter;
+use App\Support\Theme;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Storage;
 
 class AdminController extends Controller
@@ -115,11 +117,36 @@ class AdminController extends Controller
      * How solid the two doorway cards are. Clamped in the model rather than
      * only here, so the range holds however the value is written.
      */
+    public function showAppearance()
+    {
+        return view('admin.appearance', [
+            'pairs'   => config('themes.pairs'),
+            'weights' => config('themes.weights'),
+            'pair'    => Theme::pairKey(),
+            'brand'   => Theme::brand(),
+            'gold'    => Theme::gold(),
+            'size'    => SiteSetting::number('base_font_px'),
+            'headW'   => SiteSetting::number('heading_weight'),
+            'bodyW'   => SiteSetting::number('body_weight'),
+            'tint'    => SiteSetting::number('door_tint'),
+            'blur'    => SiteSetting::number('door_blur'),
+            'slide'   => HeroSlide::where('is_active', true)->orderBy('sort_order')->first(),
+        ]);
+    }
+
     public function appearance(Request $request)
     {
         $data = $request->validate([
-            'door_tint' => ['required', 'integer', 'min:0', 'max:100'],
-            'door_blur' => ['required', 'integer', 'min:0', 'max:30'],
+            'door_tint'      => ['required', 'integer', 'min:0', 'max:100'],
+            'door_blur'      => ['required', 'integer', 'min:0', 'max:30'],
+            'base_font_px'   => ['required', 'integer', 'min:13', 'max:19'],
+            // Weights are keys of the offered list, not free numbers.
+            'heading_weight' => ['required', Rule::in(array_keys(config('themes.weights.head')))],
+            'body_weight'    => ['required', Rule::in(array_keys(config('themes.weights.body')))],
+            'font_pair'      => ['required', Rule::in(array_keys(config('themes.pairs')))],
+            // Hex only. This value ends up inside a stylesheet.
+            'brand_color'    => ['required', 'regex:/^#[0-9a-fA-F]{6}$/'],
+            'gold_color'     => ['required', 'regex:/^#[0-9a-fA-F]{6}$/'],
         ]);
 
         foreach ($data as $key => $value) {
