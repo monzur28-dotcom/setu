@@ -15,12 +15,15 @@
 FROM php:8.2-apache
 
 # libzip/libpng/libjpeg/freetype are the build inputs for gd and zip.
+# libpq-dev is the PostgreSQL client library — Supabase is Postgres, and
+# without pdo_pgsql the container starts and then cannot reach the database
+# at all. Both drivers are installed so the image runs against either.
 RUN apt-get update && apt-get install -y --no-install-recommends \
         libpng-dev libjpeg62-turbo-dev libfreetype6-dev \
-        libzip-dev libicu-dev unzip git \
+        libzip-dev libicu-dev libpq-dev unzip git \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j"$(nproc)" \
-        pdo_mysql mbstring bcmath gd zip exif intl opcache \
+        pdo_mysql pdo_pgsql mbstring bcmath gd zip exif intl opcache \
     && a2enmod rewrite headers \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 

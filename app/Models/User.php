@@ -37,6 +37,17 @@ class User extends Authenticatable
 
     // ---------------------------------------------------------------- mobile
 
+    /**
+     * Emails are stored folded to lower case. Addresses are case-insensitive
+     * in practice, MySQL's default collation treated them that way, and
+     * PostgreSQL does not — folding on write is what keeps the unique index
+     * and the login lookup agreeing across both.
+     */
+    public function setEmailAttribute(?string $value): void
+    {
+        $this->attributes['email'] = $value === null ? null : mb_strtolower(trim($value));
+    }
+
     public static function hashMobile(string $e164): string
     {
         return hash_hmac('sha256', preg_replace('/\D/', '', $e164), config('app.key'));

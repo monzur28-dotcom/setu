@@ -45,26 +45,20 @@ if [ -z "${APP_KEY:-}" ]; then
 fi
 
 # --------------------------------------------------------------- database
-# A plain PDO connect, not an artisan command: this has to work before the
-# migrations table exists and report failure through the exit code.
-db_ready() {
-    php -r '
-        $dsn = sprintf("mysql:host=%s;port=%s;dbname=%s",
-            getenv("DB_HOST") ?: "127.0.0.1",
-            getenv("DB_PORT") ?: "3306",
-            getenv("DB_DATABASE") ?: "setu");
-        new PDO($dsn, getenv("DB_USERNAME") ?: "root", getenv("DB_PASSWORD") ?: "");
-    ' >/dev/null 2>&1
-}
-
+# docker/db.php works out MySQL or PostgreSQL from DB_URL or DB_CONNECTION,
+# so this script does not need to know which one it is talking to. The last
+# attempt prints the driver's own error rather than a generic timeout —
+# "password authentication failed" and "no route to host" want different
+# fixes, and a bare "no database" tells you neither.
 echo "==> Waiting for the database"
 for i in $(seq 1 30); do
-    if db_ready; then
+    if php docker/db.php ready >/dev/null 2>&1; then
         echo "    connected"
         break
     fi
     if [ "$i" = "30" ]; then
-        echo "FATAL: no database after 60s. Check the DB_* variables."
+        echo "FATAL: no database after 60s. The driver said:"
+        php docker/db.php ready || true
         exit 1
     fi
     sleep 2
@@ -75,14 +69,7 @@ php artisan migrate --force --no-interaction
 
 # Seed only into an empty database. A redeploy must never duplicate members
 # or, worse, reset a real one's profile back to demo data.
-USER_COUNT="$(php -r '
-    $dsn = sprintf("mysql:host=%s;port=%s;dbname=%s",
-        getenv("DB_HOST") ?: "127.0.0.1",
-        getenv("DB_PORT") ?: "3306",
-        getenv("DB_DATABASE") ?: "setu");
-    $pdo = new PDO($dsn, getenv("DB_USERNAME") ?: "root", getenv("DB_PASSWORD") ?: "");
-    echo (int) $pdo->query("SELECT COUNT(*) FROM users")->fetchColumn();
-' 2>/dev/null || echo 0)"
+USER_COUNT="$(php docker/db.php users 2>/dev/null || echo 0)"
 
 if [ "${USER_COUNT}" = "0" ]; then
     echo "==> Empty database, seeding"

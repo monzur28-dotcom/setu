@@ -14,6 +14,18 @@ use Illuminate\Support\Facades\Schema;
  * had nothing to pick but "Other", on the field this product weights most
  * heavily when it matches people.
  *
+ * Written per driver rather than through $table->enum()->change(), because
+ * that emits invalid SQL on PostgreSQL:
+ *
+ *   alter table "profiles" alter column "religion" type varchar(255)
+ *       check ("religion" in (...))
+ *
+ * which Postgres rejects at "check" — a type change and a constraint are two
+ * statements there, not one. Laravel represents an enum as varchar plus a
+ * CHECK named <table>_<column>_check, so widening it means replacing that
+ * constraint. MySQL has a real ENUM type and takes MODIFY. SQLite has
+ * neither and rebuilds the table, which the framework does correctly.
+ *
  * Locale, currency and timezone defaults are deliberately NOT touched here.
  * A column default is the wrong place to decide them: the right answer
  * depends on the country the member just chose, so RegisterController sets
@@ -31,9 +43,7 @@ return new class extends Migration
 
     public function up(): void
     {
-        Schema::table('profiles', function (Blueprint $table) {
-            $table->enum('religion', self::WIDENED)->change();
-        });
+        $this->setReligion(self::WIDENED);
     }
 
     public function down(): void
@@ -44,8 +54,34 @@ return new class extends Migration
             ->whereNotIn('religion', self::ORIGINAL)
             ->update(['religion' => 'OTHER']);
 
-        Schema::table('profiles', function (Blueprint $table) {
-            $table->enum('religion', self::ORIGINAL)->change();
-        });
+        $this->setReligion(self::ORIGINAL);
+    }
+
+    private function setReligion(array $values): void
+    {
+        $quoted = implode(', ', array_map(fn ($v) => "'".$v."'", $values));
+
+        match (DB::getDriverName()) {
+            'pgsql' => $this->postgres($quoted),
+            'mysql', 'mariadb' => DB::statement(
+                "ALTER TABLE profiles MODIFY religion ENUM({$quoted}) NOT NULL"
+            ),
+            // SQLite rebuilds the table; the framework's own path is correct
+            // there and there is no constraint to name.
+            default => Schema::table('profiles', function (Blueprint $table) use ($values) {
+                $table->enum('religion', $values)->change();
+            }),
+        };
+    }
+
+    private function postgres(string $quoted): void
+    {
+        // IF EXISTS so this is safe on a database where the constraint was
+        // never created under that name.
+        DB::statement('ALTER TABLE profiles DROP CONSTRAINT IF EXISTS profiles_religion_check');
+        DB::statement(
+            "ALTER TABLE profiles ADD CONSTRAINT profiles_religion_check
+             CHECK (religion::text IN ({$quoted}))"
+        );
     }
 };
