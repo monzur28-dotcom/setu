@@ -1,29 +1,37 @@
 {{--
-    A wireframe globe, turning.
+    A turning globe, after globe1.mp4.
 
-    Built from real 3D CSS transforms rather than a library: twelve meridian
-    circles rotated around the Y axis and five latitude circles laid flat at
-    their true heights, inside one container that rotates. It is an actual
-    sphere, so the meridians foreshorten correctly as they come round —
-    which is the part that makes a fake globe look fake.
+    The reference is a stylised "network earth": a dense dot-grid sphere, a
+    hot glowing rim at the limb, light streaks orbiting on tilted planes, and
+    small hexagonal markers pinned to the surface. All geometry and glow,
+    which is the reason it can be rebuilt honestly in CSS — the other
+    reference, Globe8, is photographic Earth with cloud and city lights, and
+    that needs WebGL or the video, not a fake.
 
-    No Three.js, no globe.gl, no CDN. A decorative element on the front page
-    does not justify half a megabyte of JavaScript, a third-party origin, or
-    a page that stops working when you are offline.
+    Recoloured. The source is neon purple and cyan; this site is warm alta
+    red and gold set in a serif, and a cyberpunk globe in the middle of it
+    would read as pasted in from somewhere else.
 
-    Positions are unitless fractions of the sphere's radius; CSS multiplies
-    them by --r, so the whole thing scales by changing one number.
+    Built from real 3D transforms: eighteen meridians and nine latitudes
+    inside one rotating container, so the grid foreshortens correctly at the
+    limb. That foreshortening is the difference between a sphere and a
+    spinning flat circle.
 
-    The pins sit at real latitudes and longitudes, so what it illustrates is
-    what it shows.
+    Positions are unitless fractions of the radius; CSS multiplies them by
+    --r, so the whole thing rescales from one number.
 --}}
 @php
-    // Meridians every 15°: enough to read as a sphere, not so many it moirés.
-    $meridians = range(0, 11);
+    $meridians = range(0, 17);              // every 10°
+    $latitudes = [-70, -52, -35, -17, 0, 17, 35, 52, 70];
 
-    $latitudes = [-60, -30, 0, 30, 60];
+    // Tilt, size and speed of each orbiting streak.
+    $orbits = [
+        ['tiltX' => 74,  'tiltZ' => -18, 'scale' => 1.22, 'dur' => 9,  'dir' => 'normal'],
+        ['tiltX' => 62,  'tiltZ' => 34,  'scale' => 1.34, 'dur' => 14, 'dir' => 'reverse'],
+        ['tiltX' => 100, 'tiltZ' => 8,   'scale' => 1.15, 'dur' => 19, 'dir' => 'normal'],
+    ];
 
-    // [latitude, longitude] for a handful of the featured markets.
+    // [latitude, longitude] — real coordinates for the featured markets.
     $pins = [
         [23.8, 90.4],    // Dhaka
         [51.5, -0.1],    // London
@@ -36,9 +44,21 @@
     ];
 @endphp
 <div class="globe-scene" aria-hidden="true">
+    {{-- Orbiting streaks sit outside the sphere, on their own tilted planes.
+         Each ring is transparent but for one lit edge, so rotating it reads
+         as a light travelling around an orbit. --}}
+    @foreach ($orbits as $o)
+        <span class="globe-orbit" style="
+            --tiltX:{{ $o['tiltX'] }}deg;
+            --tiltZ:{{ $o['tiltZ'] }}deg;
+            --scale:{{ $o['scale'] }};
+            --dur:{{ $o['dur'] }}s;
+            --dir:{{ $o['dir'] }}"></span>
+    @endforeach
+
     <div class="globe">
         @foreach ($meridians as $i)
-            <span class="globe-meridian" style="--turn:{{ $i * 15 }}deg"></span>
+            <span class="globe-meridian" style="--turn:{{ $i * 10 }}deg"></span>
         @endforeach
 
         @foreach ($latitudes as $lat)
@@ -59,5 +79,8 @@
         @endforeach
     </div>
 
+    {{-- Volume and the hot limb. A wireframe with no shading reads as a flat
+         spirograph; the rim is what makes it a lit object. --}}
     <div class="globe-glow"></div>
+    <div class="globe-rim"></div>
 </div>
